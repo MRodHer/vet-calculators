@@ -513,6 +513,68 @@
     <div class="step final" id="formulaResult">—</div>
   </div>
 
+  <div class="card">
+    <h2>Preparación de bolsa anticoagulante</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="collectVol">Volumen a colectar del donador</label>
+        <div class="input-row">
+          <input type="number" inputmode="decimal" id="collectVol" min="1" step="0.1" value="122.7">
+          <span class="unit">mL</span>
+        </div>
+        <span class="hint">Auto-llenado con el volumen calculado. Edítalo si vas a colectar con margen.</span>
+      </div>
+      <div class="field">
+        <label for="bagCapacity">Capacidad de la bolsa</label>
+        <div class="input-row">
+          <input type="number" inputmode="decimal" id="bagCapacity" min="50" max="1000" step="10" value="500">
+          <span class="unit">mL</span>
+        </div>
+        <span class="hint">Bolsa humana estándar (ACD-A): 500 mL. CPDA-1: 450 mL.</span>
+      </div>
+      <div class="field">
+        <label for="bagAcd">ACD inicial en bolsa</label>
+        <div class="input-row">
+          <input type="number" inputmode="decimal" id="bagAcd" min="10" max="200" step="0.5" value="75">
+          <span class="unit">mL</span>
+        </div>
+        <span class="hint">ACD-A: 75 mL para 500. CPDA-1: 63 mL para 450.</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="bagAlerts"></div>
+
+  <div class="result" id="resultBag">
+    <div class="result-main">
+      <span class="result-value" id="acdRemove">—</span>
+      <span class="result-unit">mL de ACD a sacar de la bolsa</span>
+    </div>
+    <div class="result-sub">Antes de colectar sangre del donador, extraer este volumen de anticoagulante de la bolsa para conservar la proporción correcta.</div>
+
+    <div class="result-secondary">
+      <div class="stat">
+        <label>ACD que queda en bolsa</label>
+        <div class="val"><span id="acdRemaining">—</span><span class="u">mL</span></div>
+      </div>
+      <div class="stat">
+        <label>Volumen final en bolsa</label>
+        <div class="val"><span id="bagFinalVol">—</span><span class="u">mL</span></div>
+      </div>
+      <div class="stat">
+        <label>Ratio ACD : sangre</label>
+        <div class="val"><span id="acdRatio">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula" id="bagFormulaBox">
+    <div class="label">Cálculo de la bolsa</div>
+    <div class="step">ACD necesario = Volumen sangre × (ACD<sub>bolsa</sub> ÷ Capacidad<sub>bolsa</sub>)</div>
+    <div class="step" id="bagFormulaSubstituted">—</div>
+    <div class="step final" id="bagFormulaResult">—</div>
+  </div>
+
   <footer class="note">
     <p><strong>Recordatorios clínicos:</strong></p>
     <p>· Iniciar a 0.25 mL/kg/h durante los primeros 15–30 min para vigilar reacción transfusional, luego subir a tasa de mantenimiento.</p>
@@ -543,10 +605,21 @@
     formulaSubstituted: $('formulaSubstituted'),
     formulaResult: $('formulaResult'),
     alerts: $('alerts'),
+    collectVol: $('collectVol'),
+    bagCapacity: $('bagCapacity'),
+    bagAcd: $('bagAcd'),
+    acdRemove: $('acdRemove'),
+    acdRemaining: $('acdRemaining'),
+    bagFinalVol: $('bagFinalVol'),
+    acdRatio: $('acdRatio'),
+    bagFormulaSubstituted: $('bagFormulaSubstituted'),
+    bagFormulaResult: $('bagFormulaResult'),
+    bagAlerts: $('bagAlerts'),
   };
 
   let currentSpecies = 'dog';
   let bvUserEdited = false;
+  let collectVolUserEdited = false;
 
   // Species toggle
   document.querySelectorAll('.species-btn').forEach(btn => {
@@ -562,10 +635,15 @@
   });
 
   els.bloodVolume.addEventListener('input', () => { bvUserEdited = true; });
+  els.collectVol.addEventListener('input', () => { collectVolUserEdited = true; calcBag(); });
 
   // Recalc on any change
   ['weight','pcvCurrent','pcvTarget','pcvDonor','bloodVolume','rate'].forEach(id => {
     els[id].addEventListener('input', calc);
+  });
+
+  ['bagCapacity','bagAcd'].forEach(id => {
+    els[id].addEventListener('input', calcBag);
   });
 
   function num(el) {
@@ -636,6 +714,7 @@
       els.perKgOut.textContent = '—';
       els.formulaSubstituted.textContent = '—';
       els.formulaResult.textContent = '—';
+      calcBag();
       return;
     }
 
@@ -653,6 +732,12 @@
     els.formulaSubstituted.innerHTML = `mL = ${fmt(weight,1)} × ${fmt(bv,0)} × (${fmt(pcvTgt,1)} − ${fmt(pcvCur,1)}) ÷ ${fmt(pcvDon,1)}`;
     els.formulaResult.innerHTML = `mL = ${fmt(weight * bv * (pcvTgt - pcvCur), 1)} ÷ ${fmt(pcvDon,1)} = <strong>${fmt(volumeMl,1)} mL</strong>`;
 
+    // Auto-fill collect volume si el usuario no lo ha tocado
+    if (!collectVolUserEdited) {
+      els.collectVol.value = fmt(volumeMl, 1);
+    }
+    calcBag();
+
     // Clinical alerts
     if (perKg > 22) {
       showAlert('danger', `<strong>Volumen excede el máximo seguro</strong> (${fmt(perKg,1)} mL/kg vs 22 mL/kg máx). Riesgo de sobrecarga circulatoria (TACO). Considera dividir en dos transfusiones separadas 12–24 h, o usar paquete globular.`);
@@ -666,6 +751,57 @@
 
     if (currentSpecies === 'cat') {
       showAlert('info', `<strong>Gato:</strong> tipificar grupo sanguíneo (A / B / AB) obligatorio antes de transfundir — reacciones tipo A↔B son fatales. No existe "donador universal" felino.`);
+    }
+  }
+
+  function showBagAlert(type, text) {
+    const div = document.createElement('div');
+    div.className = `alert alert-${type}`;
+    div.innerHTML = `<span class="icon">${type === 'danger' ? '!' : (type === 'warn' ? '!' : 'i')}</span><div class="body">${text}</div>`;
+    els.bagAlerts.appendChild(div);
+  }
+
+  function calcBag() {
+    els.bagAlerts.innerHTML = '';
+
+    const collectVol = num(els.collectVol);
+    const bagCap = num(els.bagCapacity);
+    const bagAcd = num(els.bagAcd);
+
+    const reset = () => {
+      els.acdRemove.textContent = '—';
+      els.acdRemaining.textContent = '—';
+      els.bagFinalVol.textContent = '—';
+      els.acdRatio.textContent = '—';
+      els.bagFormulaSubstituted.textContent = '—';
+      els.bagFormulaResult.textContent = '—';
+    };
+
+    if (!collectVol || collectVol <= 0 || !bagCap || bagCap <= 0 || bagAcd === null || bagAcd < 0) {
+      reset();
+      return;
+    }
+
+    const ratio = bagAcd / bagCap;
+    const acdNeeded = collectVol * ratio;
+    const acdRemove = Math.max(0, bagAcd - acdNeeded);
+    const acdRemaining = bagAcd - acdRemove;
+    const bagFinalVol = collectVol + acdRemaining;
+    const ratioDenom = acdRemaining > 0 ? (collectVol / acdRemaining) : 0;
+
+    els.acdRemove.textContent = fmt(acdRemove, 1);
+    els.acdRemaining.textContent = fmt(acdRemaining, 1);
+    els.bagFinalVol.textContent = fmt(bagFinalVol, 1);
+    els.acdRatio.textContent = ratioDenom > 0 ? `1 : ${fmt(ratioDenom, 1)}` : '—';
+
+    els.bagFormulaSubstituted.innerHTML = `ACD necesario = ${fmt(collectVol,1)} × (${fmt(bagAcd,1)} ÷ ${fmt(bagCap,0)}) = <strong>${fmt(acdNeeded,1)} mL</strong>`;
+    els.bagFormulaResult.innerHTML = `ACD a sacar = ${fmt(bagAcd,1)} − ${fmt(acdNeeded,1)} = <strong>${fmt(acdRemove,1)} mL</strong>`;
+
+    if (collectVol > bagCap) {
+      showBagAlert('warn', `<strong>Volumen a colectar excede la capacidad de la bolsa</strong> (${fmt(collectVol,1)} mL vs ${fmt(bagCap,0)} mL). Considera usar dos bolsas o reducir el volumen.`);
+    }
+    if (acdNeeded > bagAcd) {
+      showBagAlert('danger', `<strong>ACD insuficiente en la bolsa</strong> para este volumen (necesitas ${fmt(acdNeeded,1)} mL, la bolsa tiene ${fmt(bagAcd,1)} mL). No saques nada y agrega ${fmt(acdNeeded - bagAcd,1)} mL extra de ACD, o reduce el volumen colectado.`);
     }
   }
 
