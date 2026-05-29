@@ -386,6 +386,22 @@
   .alert .body { flex: 1; }
   .alert strong { font-weight: 600; }
 
+  .topnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    color: var(--text-dim);
+  }
+  .topnav a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dashed transparent;
+  }
+  .topnav a:hover { border-bottom-color: var(--accent); }
+  .topnav .here { color: var(--text); font-weight: 600; }
+
   footer.note {
     margin-top: 28px;
     padding: 16px 0;
@@ -408,6 +424,12 @@
 <body>
 
 <div class="app">
+
+  <div class="topnav">
+    <span>Calculadoras:</span>
+    <span class="here">Transfusión</span>
+    <a href="./shockwave.html">Ondas de choque</a>
+  </div>
 
   <header>
     <h1>Calculadora de transfusión sanguínea</h1>
