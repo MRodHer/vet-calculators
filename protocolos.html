@@ -8,9 +8,9 @@
   :root { --azul:#0d3b66; --azul2:#1b6ca8; --linea:#cdd5df; --suave:#f3f7fb; --verde:#2b6a3f; }
   * { box-sizing: border-box; }
   body { font-family:"Segoe UI",Helvetica,Arial,sans-serif; color:#1f2933; margin:0; background:#eef2f6; line-height:1.45; }
-  header { background:var(--azul); color:#fff; padding:18px 22px; }
-  header h1 { margin:0; font-size:20px; }
-  header p { margin:4px 0 0; font-size:13px; opacity:.9; }
+  header.top { background:var(--azul); color:#fff; padding:18px 22px; }
+  header.top h1 { margin:0; font-size:20px; }
+  header.top p { margin:4px 0 0; font-size:13px; opacity:.9; }
   .wrap { max-width:1080px; margin:0 auto; padding:18px; }
   .panel { background:#fff; border:1px solid var(--linea); border-radius:10px; padding:16px 18px; margin-bottom:16px; }
   .panel h2 { margin:0 0 12px; font-size:16px; color:var(--azul); border-bottom:2px solid #e0e7ef; padding-bottom:6px; }
@@ -32,34 +32,42 @@
   /* OUTPUT */
   #out { display:none; }
   .doc { background:#fff; border:1px solid var(--linea); border-radius:10px; padding:22px 26px; }
-  .doc h2.title { font-size:20px; color:var(--azul); border:0; margin:0 0 2px; }
+  .doc h2.title { font-size:21px; color:var(--azul); border:0; margin:0 0 2px; }
   .doc .ptags { font-size:12.5px; color:#52606d; margin-bottom:10px; }
-  .block { border:1px solid #d3dce6; border-radius:8px; padding:10px 14px; margin:10px 0; page-break-inside:avoid; }
-  .block h3 { margin:0 0 6px; font-size:14px; color:#102a43; display:flex; align-items:center; gap:8px; }
-  .pill { font-size:10px; font-weight:700; color:#fff; background:var(--azul2); border-radius:12px; padding:2px 9px; }
-  .kv { display:grid; grid-template-columns:130px 1fr; gap:3px 10px; font-size:12.5px; }
+  .legend { background:var(--suave); border-left:4px solid var(--azul2); padding:9px 13px; border-radius:4px; margin:10px 0 14px; font-size:12px; }
+  .legend span { display:inline-block; font-size:11px; padding:2px 9px; border-radius:11px; margin:2px 6px 2px 0; }
+  .phase-head { font-size:15px; color:var(--azul); margin:18px 0 4px; border-bottom:2px solid #e0e7ef; padding-bottom:4px; }
+  .session { border:1px solid #d3dce6; border-radius:8px; padding:9px 13px; margin:9px 0; page-break-inside:avoid; }
+  .session h3 { margin:0 0 5px; font-size:13.5px; color:#102a43; }
+  .pa{border-left:6px solid #2b8a8a;} .pb{border-left:6px solid #b8860b;} .pc{border-left:6px solid #7048a8;}
+  .pp{border-left:6px solid #c0392b; background:#fff5f4;}
+  .goal { font-size:11.5px; color:#52606d; font-style:italic; margin-bottom:5px; }
+  .kv { display:grid; grid-template-columns:118px 1fr; gap:2px 10px; font-size:12px; }
   .kv b { color:var(--azul); }
-  .warn { background:#fff8e6; border:1px solid #f5d97a; border-radius:6px; padding:8px 12px; font-size:12px; margin:8px 0; }
-  .danger { background:#fdecea; border:1px solid #e6a79c; border-radius:6px; padding:8px 12px; font-size:12px; margin:8px 0; }
+  .warn { background:#fff8e6; border:1px solid #f5d97a; border-radius:6px; padding:7px 11px; font-size:11.5px; margin:7px 0; }
+  .danger { background:#fdecea; border:1px solid #e6a79c; border-radius:6px; padding:7px 11px; font-size:11.5px; margin:7px 0; }
+  table.home { border-collapse:collapse; width:100%; margin:6px 0; font-size:11.5px; }
+  table.home th,table.home td { border:1px solid #cdd5df; padding:4px 7px; text-align:left; }
+  table.home th { background:var(--azul); color:#fff; }
   .muted { color:#7b8794; font-size:11px; }
   .src { font-size:10.5px; color:#7b8794; border-top:1px solid #e0e7ef; padding-top:8px; margin-top:14px; }
   @media print {
-    body { background:#fff; } header,.panel,.btnbar,.muted.noprint { display:none !important; }
+    body { background:#fff; } header.top,.panel,.btnbar,.muted.noprint,.nav { display:none !important; }
     .wrap { max-width:100%; padding:0; } #out { display:block !important; }
     .doc { border:0; padding:0; }
-    @page { size:A4; margin:14mm; }
+    @page { size:A4; margin:13mm; }
   }
 </style>
 </head>
 <body>
-<header>
+<header class="top">
   <h1>🐾 Creador de Protocolos de Fisioterapia</h1>
-  <p>Genera el protocolo de una sesión a partir del paciente, la indicación y las terapias elegidas · Equipos: Láser Red/NIR · Chattanooga Intelect · Ondas de choque radial · Medicina regenerativa</p>
+  <p>Genera el <b>curso completo</b> de rehabilitación a partir del paciente, la indicación y las terapias disponibles · Láser Red/NIR · Chattanooga Intelect · Ondas de choque radial · Medicina regenerativa</p>
 </header>
 
 <div class="wrap">
 
-  <div style="font-size:13px;margin-bottom:14px;color:#7b8794;" class="noprint">
+  <div class="nav" style="font-size:13px;margin-bottom:14px;color:#7b8794;">
     Calculadoras: <a href="./" style="color:var(--azul2);text-decoration:none;">Transfusión</a> ·
     <a href="./shockwave.html" style="color:var(--azul2);text-decoration:none;">Ondas de choque</a> ·
     <b style="color:#1f2933;">Protocolos de fisioterapia</b>
@@ -87,283 +95,271 @@
           <option value="dolor">Dolor (analgesia general)</option>
         </select>
       </div>
-      <div><label>Fase / cronicidad</label>
+      <div><label>Fase / cronicidad inicial</label>
         <select id="fase">
           <option value="aguda">Aguda / inflamatoria (0–2 sem)</option>
           <option value="subaguda" selected>Subaguda / proliferativa (2–8 sem)</option>
           <option value="cronica">Crónica / remodelación (&gt;8 sem)</option>
         </select>
       </div>
-      <div><label>Nº de sesión</label><input id="sesion" type="number" min="1" step="1" value="1"></div>
       <div><label>Región / lado</label><input id="region" placeholder="rodilla derecha"></div>
+      <div><label>Apoyo de la extremidad</label>
+        <select id="apoyo">
+          <option value="completo">Completo (carga normal)</option>
+          <option value="parcial" selected>Parcial (cojea al andar)</option>
+          <option value="minimo">Mínimo (apenas toca de pie)</option>
+        </select>
+      </div>
+      <div><label>Sesiones por semana</label><input id="freq" type="number" min="1" max="5" value="2"></div>
+      <div><label>Nº total de sesiones (auto si vacío)</label><input id="total" type="number" min="2" max="30" placeholder="auto"></div>
     </div>
   </div>
 
   <!-- TERAPIAS -->
   <div class="panel">
-    <h2>2 · Terapias de esta sesión <span class="muted">(activa las que apliquen — puedes combinar 2 o más)</span></h2>
+    <h2>2 · Terapias disponibles para el curso <span class="muted">(activa las que Val pueda/quiera usar; el plan las reparte por fase)</span></h2>
     <div class="mods">
       <label class="mod-toggle" data-for="laser"><input type="checkbox" id="m_laser" checked><b>🔴 Láser</b></label>
-      <label class="mod-toggle" data-for="us"><input type="checkbox" id="m_us"><b>🔊 Ultrasonido</b></label>
-      <label class="mod-toggle" data-for="estim"><input type="checkbox" id="m_estim"><b>⚡ Electroterapia</b></label>
-      <label class="mod-toggle" data-for="eswt"><input type="checkbox" id="m_eswt"><b>💥 Ondas de choque</b></label>
+      <label class="mod-toggle" data-for="us"><input type="checkbox" id="m_us" checked><b>🔊 Ultrasonido</b></label>
+      <label class="mod-toggle" data-for="estim"><input type="checkbox" id="m_estim" checked><b>⚡ Electroterapia</b></label>
+      <label class="mod-toggle" data-for="eswt"><input type="checkbox" id="m_eswt" checked><b>💥 Ondas de choque</b></label>
       <label class="mod-toggle" data-for="regen"><input type="checkbox" id="m_regen"><b>🧬 PRP / Células madre</b></label>
       <label class="mod-toggle" data-for="ejerc"><input type="checkbox" id="m_ejerc" checked><b>🦴 Ejercicio</b></label>
     </div>
 
-    <!-- LÁSER cfg -->
     <div class="mod-config" id="cfg_laser">
       <div class="grid">
-        <div><label>Modo</label><select id="l_modo"><option value="PW">PW — pulsado 10 Hz (recomendado)</option><option value="CW">CW — continuo (regeneración nerviosa)</option></select></div>
+        <div><label>Modo</label><select id="l_modo"><option value="auto">Auto (PW, o CW si nervioso)</option><option value="PW">PW — pulsado 10 Hz</option><option value="CW">CW — continuo</option></select></div>
         <div><label>Potencia</label><select id="l_pot"><option>100</option><option>75</option><option>50</option><option>25</option></select></div>
         <div><label>Tiempo (min) — auto si vacío</label><input id="l_time" type="number" min="1" max="60" placeholder="auto"></div>
       </div>
     </div>
-
-    <!-- US cfg -->
     <div class="mod-config" id="cfg_us">
       <div class="grid">
-        <div><label>Profundidad objetivo</label><select id="u_depth"><option value="auto">Auto (según indicación)</option><option value="superf">Superficial (3 MHz)</option><option value="profundo">Profundo (1 MHz)</option></select></div>
-        <div><label>Efecto</label><select id="u_efecto"><option value="auto">Auto (según fase)</option><option value="noterm">No térmico (pulsado 20%)</option><option value="term">Térmico (continuo/50%)</option></select></div>
+        <div><label>Profundidad</label><select id="u_depth"><option value="auto">Auto (según indicación)</option><option value="superf">Superficial (3 MHz)</option><option value="profundo">Profundo (1 MHz)</option></select></div>
       </div>
     </div>
-
-    <!-- ESTIM cfg -->
     <div class="mod-config" id="cfg_estim">
-      <div class="grid">
-        <div><label>Objetivo</label><select id="e_goal"><option value="auto">Auto (según fase)</option><option value="analgesia">Analgesia (TENS/IFC)</option><option value="fuerza">Fortalecimiento (NMES/VMS)</option></select></div>
-      </div>
+      <div class="muted">El objetivo (analgesia vs fortalecimiento) se ajusta solo según la fase de cada sesión.</div>
     </div>
-
-    <!-- ESWT cfg -->
     <div class="mod-config" id="cfg_eswt">
       <div class="grid">
         <div><label>Severidad</label><select id="s_sev"><option value="leve">Leve / agudo</option><option value="mod" selected>Moderado crónico</option><option value="sev">Severo refractario</option></select></div>
-        <div><label>Energía (mJ) — auto si vacío</label><input id="s_mj" type="number" placeholder="auto"></div>
         <div><label>Nº de sitios</label><input id="s_sitios" type="number" min="1" value="1"></div>
+        <div><label>Nº de sesiones de choque</label><input id="s_num" type="number" min="1" max="6" value="3"></div>
       </div>
     </div>
-
-    <!-- REGEN cfg -->
     <div class="mod-config" id="cfg_regen">
       <div class="grid">
         <div><label>Producto</label><select id="r_prod"><option value="msc_prp">Células madre + PRP</option><option value="msc">Células madre (MSC)</option><option value="prp">PRP solo</option></select></div>
         <div><label>Articulación</label><input id="r_art" placeholder="rodilla"></div>
-        <div><label>Sedación aceptada</label><select id="r_sed"><option value="ligera">Sedación ligera reversible (ideal)</option><option value="local">Solo anestesia local (tutores rechazan sedación)</option></select></div>
+        <div><label>Sedación aceptada</label><select id="r_sed"><option value="ligera">Sedación ligera reversible (ideal)</option><option value="local">Solo anestesia local (rechazan sedación)</option></select></div>
       </div>
     </div>
 
     <div class="btnbar" style="margin-top:14px;">
-      <button onclick="generar()">Generar protocolo de la sesión</button>
-      <button class="sec" onclick="window.print()">Imprimir / Guardar PDF</button>
+      <button onclick="generar()">Generar protocolo completo</button>
+      <button class="sec" onclick="imprimir()">Imprimir / Guardar PDF</button>
     </div>
   </div>
 
-  <!-- OUTPUT -->
   <div id="out"></div>
-  <p class="muted noprint" style="text-align:center;">Sugerencias orientativas basadas en los manuales de los equipos y literatura veterinaria. La decisión final de parámetros es clínica y depende del paciente y del operador.</p>
+  <p class="muted noprint" style="text-align:center;">Sugerencias orientativas basadas en los manuales de los equipos y literatura veterinaria. La decisión final de parámetros y nº de sesiones es clínica y depende del paciente y del operador.</p>
 </div>
 
 <script>
-/* ============================================================
-   DATA DE LOS MANUALES (codificada para reuso)
-   ============================================================ */
-
-// --- LÁSER Red/NIR 660·810·980 nm, 1760 mW, CW/PW 10 Hz ---
-// Tabla "Symptoms for Pets" del manual + tasas de dosis del manual.
+/* ===== DATA DE LOS MANUALES ===== */
 const LASER = {
-  doseRate: { PW:2.64, CW:5.28 },           // J/cm²/min a 100%
-  potFactor: { '100':1, '75':0.75, '50':0.5, '25':0.25 },
-  // tiempo (min) y modo por indicación (del manual del equipo)
-  porIndicacion: {
-    cruzado:{min:12, modo:'PW'}, artrosis:{min:15, modo:'PW'}, cadera:{min:13, modo:'PW'},
-    tendon:{min:12, modo:'PW'}, muscular:{min:12, modo:'PW'}, postqx:{min:15, modo:'PW'},
-    discal:{min:15, modo:'PW'}, atrofia:{min:12, modo:'PW'}, herida:{min:15, modo:'PW'},
-    dolor:{min:10, modo:'PW'}
-  }
+  doseRate:{PW:2.64,CW:5.28}, potFactor:{'100':1,'75':0.75,'50':0.5,'25':0.25},
+  porIndicacion:{ cruzado:{min:12,modo:'PW'},artrosis:{min:15,modo:'PW'},cadera:{min:13,modo:'PW'},
+    tendon:{min:12,modo:'PW'},muscular:{min:12,modo:'PW'},postqx:{min:15,modo:'PW'},
+    discal:{min:15,modo:'PW'},atrofia:{min:12,modo:'PW'},herida:{min:15,modo:'PW'},dolor:{min:10,modo:'PW'} }
 };
-
-// --- ULTRASONIDO Chattanooga Intelect (1 y 3 MHz) ---
-const US = {
-  // profundidad sugerida por indicación
-  depth: { cruzado:'superf', artrosis:'superf', cadera:'profundo', tendon:'superf',
-           muscular:'profundo', postqx:'superf', discal:'profundo', atrofia:'profundo',
-           herida:'superf', dolor:'superf' },
-  freq: { superf:'3 MHz', profundo:'1 MHz' }
-};
-
-// --- ELECTROTERAPIA Chattanooga Intelect ---
-const ESTIM = {
-  tens:{ nombre:'TENS / interferencial', hz:'80–120 Hz', tiempo:'15–20 min', tipo:'sensitivo cómodo', forma:'Premodulada / IFC / bifásica' },
-  nmes:{ nombre:'NMES / VMS', hz:'35–50 Hz', tiempo:'10–20 min', tipo:'motora visible y cómoda', forma:'VMS / Russian (portadora 2500 Hz)', ciclo:'rampa 2 s · on 6–10 s / off 12–30 s' }
-};
-
-// --- ONDAS DE CHOQUE radial (vet-calculators/shockwave) ---
-const ESWT = {
-  baseSev:{ leve:70, mod:95, sev:120 },     // mJ base por severidad
-  freqHz:'10–14 Hz',
-  sesiones:'3–5 sesiones, 1×/semana',
-  sedacionUmbral:120,
-  pulsosPorPeso:function(kg){ if(kg<10) return '800–1200'; if(kg<30) return '1200–1800'; return '1800–2500'; },
-  contra:'Placas de crecimiento abiertas, sobre pulmón/corazón/tráquea/ojos/médula, tumor en el sitio, infección/herida activa, gestación, coagulopatías/anticoagulantes, marcapasos.'
-};
-
-// --- MEDICINA REGENERATIVA (PRP / MSC) ---
-const REGEN = {
-  prodLabel:{ msc_prp:'Células madre mesenquimales + PRP', msc:'Células madre mesenquimales (MSC)', prp:'PRP (plasma rico en plaquetas)' }
-};
-
+const US = { depth:{cruzado:'superf',artrosis:'superf',cadera:'profundo',tendon:'superf',muscular:'profundo',
+  postqx:'superf',discal:'profundo',atrofia:'profundo',herida:'superf',dolor:'superf'}, freq:{superf:'3 MHz',profundo:'1 MHz'} };
+const ESWT = { baseSev:{leve:70,mod:95,sev:120}, freqHz:'10–14 Hz', sedUmbral:120,
+  pulsos:k=>k<10?'800–1200':(k<30?'1200–1800':'1800–2500'),
+  contra:'Placas de crecimiento abiertas, sobre pulmón/corazón/tráquea/ojos/médula, tumor en el sitio, infección/herida activa, gestación, coagulopatías/anticoagulantes, marcapasos.' };
+const REGEN = { lbl:{msc_prp:'Células madre mesenquimales + PRP',msc:'Células madre mesenquimales (MSC)',prp:'PRP (plasma rico en plaquetas)'} };
+const SESIONES_IND = { cruzado:12,artrosis:10,cadera:10,tendon:9,muscular:8,postqx:12,discal:10,atrofia:10,herida:8,dolor:6 };
 const FASES = { aguda:'Aguda / inflamatoria', subaguda:'Subaguda / proliferativa', cronica:'Crónica / remodelación' };
-const INDIC = { cruzado:'Ligamento cruzado (rodilla)', artrosis:'Osteoartrosis', cadera:'Displasia de cadera',
-  tendon:'Tendinopatía', muscular:'Lesión muscular', postqx:'Post-quirúrgico ortopédico',
-  discal:'Enf. discal / dolor lumbar', atrofia:'Atrofia muscular', herida:'Tejido blando', dolor:'Dolor (analgesia)' };
+const INDIC = { cruzado:'Ligamento cruzado (rodilla)',artrosis:'Osteoartrosis',cadera:'Displasia de cadera',tendon:'Tendinopatía',
+  muscular:'Lesión muscular',postqx:'Post-quirúrgico ortopédico',discal:'Enf. discal / dolor lumbar',atrofia:'Atrofia muscular',herida:'Tejido blando',dolor:'Dolor (analgesia)' };
+const APOYO = { completo:'Completo', parcial:'Parcial (cojea)', minimo:'Mínimo (apenas toca)' };
 
-/* ============================================================
-   UI: toggles
-   ============================================================ */
+/* ===== toggles ===== */
 document.querySelectorAll('.mod-toggle').forEach(t=>{
-  const cb=t.querySelector('input'), id=t.dataset.for, cfg=document.getElementById('cfg_'+id);
-  const sync=()=>{ t.classList.toggle('on',cb.checked); if(cfg) cfg.classList.toggle('show',cb.checked); };
-  cb.addEventListener('change',sync); sync();
+  const cb=t.querySelector('input'),id=t.dataset.for,cfg=document.getElementById('cfg_'+id);
+  const s=()=>{t.classList.toggle('on',cb.checked); if(cfg)cfg.classList.toggle('show',cb.checked);};
+  cb.addEventListener('change',s); s();
 });
+const val=id=>document.getElementById(id).value;
+const chk=id=>document.getElementById(id).checked;
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
-/* ============================================================
-   GENERADOR
-   ============================================================ */
-function val(id){ return document.getElementById(id).value; }
-function chk(id){ return document.getElementById(id).checked; }
+/* ===== fase por sesión ===== */
+function faseDe(i,sch){
+  if(sch.infiltr && i===sch.infiltr) return 'proc';
+  if(i<=sch.aEnd) return 'A';
+  if(i<=sch.bEnd) return 'B';
+  return 'C';
+}
 
-function generar(){
-  const p = {
-    nombre: val('nombre')||'Paciente', especie: val('especie'), peso: parseFloat(val('peso'))||0,
-    edad: val('edad'), ind: val('indicacion'), fase: val('fase'), sesion: val('sesion')||'1',
-    region: val('region')||'—'
-  };
-  let blocks = '';
-
-  // ---- LÁSER ----
-  if(chk('m_laser')){
-    const base = LASER.porIndicacion[p.ind] || {min:12,modo:'PW'};
-    let modo = val('l_modo')==='CW' ? 'CW' : (val('l_modo')==='PW' ? 'PW' : base.modo);
-    const pot = val('l_pot');
-    const min = parseInt(val('l_time')) || base.min;
-    const dosis = (LASER.doseRate[modo]*LASER.potFactor[pot]*min).toFixed(1);
-    blocks += card('🔴 Láser', 'Red/NIR 660·810·980 nm', [
-      ['Modo', modo==='PW'?'PW — pulsado 10 Hz':'CW — continuo'],
-      ['Potencia', pot+' %'],
-      ['Tiempo', min+' min sobre '+p.region+' (mover el cabezal; tratar también musculatura periarticular)'],
-      ['Dosis estimada', '≈ '+dosis+' J/cm² entregados'],
-      ['Técnica', 'Contacto directo con piel (rasurar/separar pelo) · gafas para el operador · no apuntar a ojos']
-    ], modo==='CW' ? null : 'PW es superior a CW para casi todo excepto regeneración nerviosa.');
+/* ===== builders de cada modalidad ===== */
+function laserLine(ph,post,p){
+  const base=LASER.porIndicacion[p.ind]||{min:12,modo:'PW'};
+  let modo = val('l_modo')==='auto'?base.modo:val('l_modo');
+  const pot=val('l_pot'); const min=parseInt(val('l_time'))||base.min;
+  const dosis=(LASER.doseRate[modo]*LASER.potFactor[pot]*min).toFixed(1);
+  let zona = post?'<b>solo musculatura</b> (evitar punto de punción)':(ph==='A'?p.region+' (analgésico/antiinflamatorio)':p.region+' + musculatura periarticular');
+  return `${modo} · ${pot}% · ${min} min · ${zona} · ≈${dosis} J/cm²`;
+}
+function usLine(ph,post,p){
+  if(post) return 'Evitar sobre la articulación; opcional 1 MHz pulsado en músculo';
+  let depth = val('u_depth')==='auto'?(US.depth[p.ind]||'superf'):val('u_depth');
+  const term = (ph!=='A' && p.fase!=='aguda');
+  const modoU = term?'continuo / 50% (térmico, pre-estiramiento)':'pulsado 20% (no térmico, antiinflamatorio)';
+  const inten = term?(depth==='profundo'?'1.0–1.5 W/cm²':'0.8–1.0 W/cm²'):'0.5–0.8 W/cm²';
+  return `${US.freq[depth]} · ${modoU} · ${inten} · 5–8 min`;
+}
+function estimLine(ph,post,p){
+  if(ph==='proc'||post) return 'NMES suave 35 Hz · 10 min cuádriceps + TENS si dolor';
+  if(ph==='A'){
+    let s='TENS 80–120 Hz · 12–15 min (analgesia)';
+    if(p.apoyo!=='completo'||p.ind==='atrofia') s+=' + NMES 35 Hz · 10 min cuádriceps (anti-atrofia)';
+    return s;
   }
-
-  // ---- ULTRASONIDO ----
-  if(chk('m_us')){
-    let depth = val('u_depth')==='auto' ? (US.depth[p.ind]||'superf') : val('u_depth');
-    let efecto;
-    if(val('u_efecto')==='auto') efecto = (p.fase==='aguda') ? 'noterm' : 'term';
-    else efecto = val('u_efecto');
-    const freq = US.freq[depth];
-    const modoU = efecto==='noterm' ? 'Pulsado 20 % (no térmico)' : 'Continuo / pulsado 50–100 % (térmico)';
-    const inten = efecto==='noterm' ? '0.5–0.8 W/cm²' : (depth==='profundo'?'1.0–1.5 W/cm²':'0.8–1.0 W/cm²');
-    blocks += card('🔊 Ultrasonido', 'Chattanooga Intelect', [
-      ['Frecuencia', freq+' ('+(depth==='superf'?'superficial: cápsula/tendón':'profundo: músculo/cadera')+')'],
-      ['Modo', modoU],
-      ['Intensidad', inten],
-      ['Tiempo', '5–8 min por zona (gel abundante, cabezal en movimiento)'],
-      ['Cuándo', efecto==='noterm'?'Fase inflamatoria — bajar edema y dolor':'Pre-estiramiento / extensibilidad de tejido']
-    ]);
+  if(ph==='B') return 'NMES / VMS / Russian · 50 Hz · on 10 s/off 20 s · 15 min cuádriceps';
+  return 'NMES · 50 Hz · 15 min cuádriceps (mantenimiento)';
+}
+function ejercLine(ph,p){
+  if(ph==='proc') return 'Día del procedimiento: reposo. Post 48–72 h estricto.';
+  if(ph==='A'||ph==='postA') {
+    let s='PROM rodilla 10 rep · cambios de peso · bipedestación 5–10 s · caminata 5 min';
+    if(p.apoyo==='minimo') s+=' (estimular que cargue la pata; propiocepción prioritaria)';
+    return s;
   }
-
-  // ---- ELECTROTERAPIA ----
-  if(chk('m_estim')){
-    let goal = val('e_goal');
-    if(goal==='auto') goal = (p.fase==='aguda'||p.ind==='dolor') ? 'analgesia' : 'fuerza';
-    if(goal==='analgesia'){
-      const d=ESTIM.tens;
-      blocks += card('⚡ Electroterapia — Analgesia', 'Chattanooga Intelect', [
-        ['Forma de onda', d.forma],['Frecuencia', d.hz],['Intensidad', d.tipo],
-        ['Tiempo', d.tiempo],['Colocación', 'Electrodos periarticulares en la zona dolorosa']
-      ]);
-    } else {
-      const d=ESTIM.nmes;
-      blocks += card('⚡ Electroterapia — Fortalecimiento', 'Chattanooga Intelect', [
-        ['Forma de onda', d.forma],['Frecuencia', d.hz],['Ciclo', d.ciclo],
-        ['Intensidad', d.tipo],['Tiempo', d.tiempo],
-        ['Colocación', 'Sobre el grupo muscular a reactivar (p. ej. cuádriceps)']
-      ], 'Empezar suave e ir subiendo la contracción según tolerancia.');
-    }
+  if(ph==='B') return 'Sit-to-stand 5→10 rep · cavaletti bajo · superficies inestables · caminata 10–15 min';
+  return 'Sit-to-stand 10–15 rep · cuesta · cavaletti · caminata 15–20 min (resistencia)';
+}
+function sessionCard(i,ph,post,p,isEswt,eEnergy){
+  const titF={A:'Fase A · dolor/activación',B:'Fase B · fortalecimiento',C:'Fase C · función/resistencia',proc:'PROCEDIMIENTO'};
+  const cls={A:'pa',B:'pb',C:'pc',proc:'pp'}[ph];
+  let rows='';
+  const add=(l,v)=>{rows+='<b>'+l+'</b><span>'+v+'</span>';};
+  if(ph==='proc'){
+    const prod=REGEN.lbl[val('r_prod')], art=val('r_art')||p.region;
+    const sed=val('r_sed')==='ligera'?'Sedación ligera reversible (butorfanol ± dexmedetomidina) — NO es anestesia general.':'Anestesia local intraarticular + contención experta (rechazan sedación; mayor riesgo de movimiento).';
+    add('🧬 Infiltración','Depósito intraarticular de '+prod+' en '+art+' · guía ecográfica · asepsia');
+    add('Sedación',sed);
+    add('Otras terapias','NO ondas de choque · NO láser de alta dosis sobre la punción · resto en pausa');
+    add('Post','Reposo estricto 48–72 h · correa · vigilar inflamación/dolor');
+    let body='<div class="session '+cls+'"><h3>Sesión '+i+' — '+titF.proc+': infiltración</h3><div class="kv">'+rows+'</div>'+
+      '<div class="danger"><b>Coordinación de tiempos:</b> última onda de choque ≥1 semana ANTES · sin choque sobre la articulación 1 semana DESPUÉS · sin láser directo sobre la punción 2–3 días. NMES y ejercicio suave continúan.</div></div>';
+    return body;
   }
+  if(chk('m_laser')) add('🔴 Láser',laserLine(ph,post,p));
+  if(chk('m_us'))    add('🔊 Ultrasonido',usLine(ph,post,p));
+  if(chk('m_estim')) add('⚡ Electroterapia',estimLine(ph,post,p));
+  if(chk('m_eswt') && isEswt){
+    const sed = (p.especie==='gato')?' · gato: requiere sedación/analgesia previa':(eEnergy>ESWT.sedUmbral?' · &gt;120 mJ: considerar ansiólisis/sedación':' · tolera sin sedar');
+    add('💥 Ondas de choque', eEnergy+' mJ · '+ESWT.freqHz+' · '+ESWT.pulsos(p.peso||35)+' pulsos · '+(val('s_sitios')||1)+' sitio(s)'+sed);
+  } else if(chk('m_eswt') && post){
+    add('💥 Ondas de choque','— (en pausa por infiltración)');
+  }
+  if(chk('m_ejerc')) add('🦴 Ejercicio',ejercLine(post?'postA':ph,p));
+  let goal = post?'Reinicio suave post-infiltración: proteger el injerto, reactivar sin agredir la articulación.':
+    (ph==='A'?'Controlar dolor/inflamación y arrancar la reactivación muscular.':
+     ph==='B'?'Maximizar fuerza y propiocepción.':'Retorno funcional y resistencia.');
+  return '<div class="session '+cls+'"><h3>Sesión '+i+' — '+titF[ph]+(post?' (post-infiltración)':'')+'</h3>'+
+    '<div class="goal">'+goal+'</div><div class="kv">'+rows+'</div></div>';
+}
 
-  // ---- ONDAS DE CHOQUE ----
+/* ===== schedule ===== */
+function buildSchedule(p){
+  const F=Math.max(1,parseInt(val('freq'))||2);
+  let N=parseInt(val('total'))|| SESIONES_IND[p.ind] || 10;
+  N=Math.max(3,Math.min(30,N));
+  const aEnd=Math.max(2,Math.round(N*0.34));
+  const regenOn=chk('m_regen');
+  let infiltr=null;
+  if(regenOn){ infiltr=Math.min(N-2,Math.max(aEnd+2,Math.round(N*0.66))); }
+  const bEnd=regenOn?infiltr-1:Math.round(N*0.67);
+  // sesiones de choque: ~semanal (cada F), desde la 2, terminando ≥1 sem antes de infiltrar
+  let eswt=[];
   if(chk('m_eswt')){
-    const sev=val('s_sev');
-    let mj = parseInt(val('s_mj'));
-    if(!mj){ mj = ESWT.baseSev[sev]; if(p.peso && p.peso<15) mj=Math.max(40,mj-20); if(p.especie==='gato') mj=Math.min(mj,70); }
-    const sitios = val('s_sitios')||'1';
-    const pulsos = ESWT.pulsosPorPeso(p.peso||35);
-    let sedNote;
-    if(p.especie==='gato') sedNote='Gatos: casi siempre requieren sedación/analgesia previa (buprenorfina 20–30 µg/kg OTM).';
-    else if(mj>ESWT.sedacionUmbral) sedNote='Energía &gt;120 mJ: considerar ansiólisis (trazodona 5–7 mg/kg o gabapentina 10–20 mg/kg VO 90 min antes) o sedación ligera.';
-    else sedNote='A esta energía la mayoría de perros tolera sin sedar.';
-    blocks += card('💥 Ondas de choque', 'Radial', [
-      ['Energía', mj+' mJ '+(parseInt(val('s_mj'))?'(manual)':'(sugerida — escalar por tolerancia)')],
-      ['Frecuencia', ESWT.freqHz],['Pulsos por sitio', pulsos],['Nº de sitios', sitios],
-      ['Esquema', ESWT.sesiones],
-      ['Técnica', 'Rasurar + gel abundante (sin gel se pierde ~70% y quema piel) · cabezal en movimiento']
-    ], sedNote);
-    blocks += '<div class="danger"><b>Contraindicaciones ESWT:</b> '+ESWT.contra+'</div>';
+    const maxNum=Math.max(1,parseInt(val('s_num'))||3);
+    for(let s=2;s<=bEnd && eswt.length<maxNum; s+=F){
+      if(regenOn && s>infiltr-F) break;
+      eswt.push(s);
+    }
+    if(eswt.length===0) eswt.push(2);
+  }
+  // energías escaladas
+  let base=ESWT.baseSev[val('s_sev')];
+  if(p.peso && p.peso<15) base=Math.max(40,base-20);
+  if(p.especie==='gato') base=Math.min(base,70);
+  const seq=[base-25,base-10,base,base+10,base+15,base+20].map(v=>Math.max(40,Math.min(p.especie==='gato'?70:130,v)));
+  const energyOf={}; eswt.forEach((s,k)=>energyOf[s]=seq[Math.min(k,seq.length-1)]);
+  return {N,F,aEnd,bEnd,infiltr,eswt,energyOf,regenOn};
+}
+
+/* ===== generar ===== */
+function generar(){
+  const p={ nombre:val('nombre')||'Paciente', especie:val('especie'), peso:parseFloat(val('peso'))||0,
+    edad:val('edad'), ind:val('indicacion'), fase:val('fase'), region:val('region')||'la zona',
+    apoyo:val('apoyo') };
+  if(!chk('m_laser')&&!chk('m_us')&&!chk('m_estim')&&!chk('m_eswt')&&!chk('m_regen')&&!chk('m_ejerc')){
+    document.getElementById('out').innerHTML='<div class="doc"><div class="warn">Activa al menos una terapia.</div></div>';
+    document.getElementById('out').style.display='block'; return;
+  }
+  const sch=buildSchedule(p);
+
+  // contar fases
+  let nA=0,nB=0,nC=0;
+  for(let i=1;i<=sch.N;i++){ if(sch.infiltr&&i===sch.infiltr)continue; const f=faseDe(i,sch); if(f==='A')nA++; else if(f==='B')nB++; else nC++; }
+
+  let html='<div class="doc"><h2 class="title">Protocolo completo — '+esc(p.nombre)+'</h2>'+
+    '<div class="ptags">'+(p.especie==='gato'?'Gato':'Perro')+(p.peso?(' · '+p.peso+' kg'):'')+(p.edad?(' · '+p.edad+' años'):'')+
+    ' · Indicación: <b>'+INDIC[p.ind]+'</b> · Estado inicial: '+FASES[p.fase]+' · Región: '+esc(p.region)+' · Apoyo: '+APOYO[p.apoyo]+'</div>'+
+    '<div class="legend"><b>'+sch.N+' sesiones · '+sch.F+'/semana ('+Math.ceil(sch.N/sch.F)+' semanas aprox.)</b><br>'+
+      '<span style="background:#d6efef;">■ Fase A · dolor/activación ('+nA+')</span>'+
+      '<span style="background:#f4e3b8;">■ Fase B · fortalecimiento ('+nB+')</span>'+
+      (sch.regenOn?'<span style="background:#c0392b;color:#fff;">■ Infiltración (S'+sch.infiltr+')</span>':'')+
+      '<span style="background:#e4daf0;">■ Fase C · función/resistencia ('+nC+')</span>'+
+      (sch.eswt.length?'<br><span class="muted">Ondas de choque en sesiones: '+sch.eswt.join(', ')+'</span>':'')+'</div>';
+
+  let lastPhaseHead='';
+  for(let i=1;i<=sch.N;i++){
+    const ph=faseDe(i,sch);
+    const post = sch.infiltr && i===sch.infiltr+1;
+    const headName = ph==='proc'?'Procedimiento':(ph==='A'?'FASE A — control de dolor, inflamación y reactivación':ph==='B'?'FASE B — fortalecimiento':'FASE C — función, retorno controlado y resistencia');
+    if(headName!==lastPhaseHead && ph!=='proc'){ html+='<div class="phase-head">'+headName+'</div>'; lastPhaseHead=headName; }
+    const isEswt = sch.eswt.includes(i);
+    html+=sessionCard(i,ph,post,p,isEswt,sch.energyOf[i]);
   }
 
-  // ---- REGENERATIVA ----
-  if(chk('m_regen')){
-    const prod=REGEN.prodLabel[val('r_prod')];
-    const art=val('r_art')||p.region;
-    const sed = val('r_sed')==='ligera'
-      ? 'Sedación ligera reversible (p. ej. butorfanol ± dexmedetomidina) — NO es anestesia general; máxima precisión.'
-      : 'Anestesia local intraarticular + contención experta. Mayor riesgo de movimiento/imprecisión (los tutores rechazan sedación).';
-    blocks += card('🧬 Medicina regenerativa', prod, [
-      ['Procedimiento', 'Infiltración intraarticular de '+prod+' en '+art],
-      ['Guía', 'Abordaje estéril con guía ecográfica · rasurado y asepsia'],
-      ['Sedación', sed],
-      ['Post', 'Reposo estricto 48–72 h · correa · vigilar inflamación/dolor']
-    ]);
-    blocks += '<div class="danger"><b>Coordinación de tiempos:</b> última onda de choque sobre la articulación ≥1 semana ANTES · sin ondas de choque sobre la articulación 1 semana DESPUÉS · sin láser de alta dosis directo sobre la punción 2–3 días. NMES y ejercicio suave pueden continuar.</div>';
-  }
+  // programa en casa
+  html+='<div class="phase-head">Programa domiciliario (diario, base — ajustar a tolerancia)</div>'+
+    '<table class="home"><tr><th>Bloque</th><th>Ejercicio</th><th>Dosis</th></tr>'+
+    '<tr><td>Movilidad / ROM</td><td>PROM de '+esc(p.region)+' + cookie stretches</td><td>10 rep · 3×/día</td></tr>'+
+    '<tr><td>Estabilidad</td><td>Equilibrio en cojín → superficies inestables</td><td>5 min · 2×/día</td></tr>'+
+    '<tr><td>Fuerza</td><td>Sit-to-stand (sentadilla canina)</td><td>5→15 rep · 2×/día</td></tr>'+
+    '<tr><td>Resistencia</td><td>Caminata con correa, progresiva</td><td>5 min → +2–3 min/semana</td></tr>'+
+    '<tr><td>Regla de oro</td><td colspan="2"><b>Sin saltos, carreras ni juego brusco durante toda la rehabilitación.</b> Control de peso estricto.</td></tr></table>';
 
-  // ---- EJERCICIO ----
-  if(chk('m_ejerc')){
-    let rows;
-    if(p.fase==='aguda') rows=[['Movilidad','PROM 10 rep · cambios de peso suaves'],['Estabilidad','Bipedestación 5–10 s · cargas simétricas'],['Carga','Caminata con correa 5 min · sin escaleras ni saltos']];
-    else if(p.fase==='subaguda') rows=[['Movilidad','PROM 10 rep ×3/día · cookie stretches'],['Estabilidad','Equilibrio en cojín 5 min · superficies inestables desde semana 4'],['Fuerza','Sit-to-stand 5→10 rep · cavaletti bajo'],['Resistencia','Caminata progresiva 7–15 min']];
-    else rows=[['Movilidad','PROM + estiramientos activos'],['Estabilidad','Superficies inestables · equilibrio dinámico'],['Fuerza','Sit-to-stand 10–15 rep · cuesta · cavaletti'],['Resistencia','Caminatas largas progresivas · endurance']];
-    rows.push(['Regla de oro','Sin saltos, carreras ni juego brusco · control de peso estricto']);
-    blocks += card('🦴 Ejercicio terapéutico', FASES[p.fase], rows);
-  }
+  if(chk('m_eswt')) html+='<div class="danger"><b>Contraindicaciones ESWT:</b> '+ESWT.contra+' · Técnica: rasurar + gel abundante (sin gel se pierde ~70% y quema piel); cabezal en movimiento; escalar energía por tolerancia.</div>';
 
-  if(!blocks){ blocks = '<div class="warn">Activa al menos una terapia para generar el protocolo.</div>'; }
-
-  const head =
-    '<div class="doc"><h2 class="title">Protocolo de sesión #'+p.sesion+'</h2>'+
-    '<div class="ptags"><b>'+esc(p.nombre)+'</b> · '+(p.especie==='gato'?'Gato':'Perro')+
-    (p.peso?(' · '+p.peso+' kg'):'')+(p.edad?(' · '+p.edad+' años'):'')+
-    ' · Indicación: <b>'+INDIC[p.ind]+'</b> · Fase: '+FASES[p.fase]+' · Región: '+esc(p.region)+'</div>';
-
-  const src = '<div class="src">Fuentes de parámetros: manual del láser Red/NIR · especificaciones Chattanooga Intelect · calculadora ESWT radial (vet-calculators) · Millis &amp; Levine, <i>Canine Rehabilitation and Physical Therapy</i>; Zink &amp; Van Dyke, <i>Canine Sports Medicine</i>; Riegel &amp; Godbold, <i>Laser Therapy in Vet Medicine</i>; Plumb\'s. Orientativo — criterio clínico final del operador.</div></div>';
+  html+='<div class="src">Parámetros: manual del láser Red/NIR · especificaciones Chattanooga Intelect · calculadora ESWT radial (vet-calculators) · Millis &amp; Levine, <i>Canine Rehabilitation and Physical Therapy</i>; Zink &amp; Van Dyke, <i>Canine Sports Medicine</i>; Riegel &amp; Godbold, <i>Laser Therapy in Vet Medicine</i>; Plumb\'s. Curso orientativo — criterio clínico final del operador.</div></div>';
 
   const out=document.getElementById('out');
-  out.innerHTML = head + blocks + src;
-  out.style.display='block';
-  out.scrollIntoView({behavior:'smooth'});
+  out.innerHTML=html; out.style.display='block'; out.scrollIntoView({behavior:'smooth'});
 }
 
-function card(titulo, sub, rows, nota){
-  let kv = rows.map(r=>'<b>'+r[0]+'</b><span>'+r[1]+'</span>').join('');
-  return '<div class="block"><h3>'+titulo+' <span class="pill">'+sub+'</span></h3>'+
-         '<div class="kv">'+kv+'</div>'+
-         (nota?('<div class="warn">'+nota+'</div>'):'')+'</div>';
+function imprimir(){
+  if(document.getElementById('out').style.display!=='block') generar();
+  setTimeout(()=>window.print(),200);
 }
-function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 </script>
 </body>
 </html>
