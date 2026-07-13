@@ -436,6 +436,51 @@
     <div class="alert alert-info"><span class="icon">i</span><div class="body">Esta jeringa va en una bomba independiente — <strong>no</strong> en la bolsa de mantenimiento. Descontar su velocidad del total de líquidos del paciente.</div></div>
   </div>
 
+  <!-- ============ MODO PMK / TIVA ============ -->
+  <div id="mode-pmk" class="hidden">
+    <div class="card">
+      <h2>Paciente — TIVA cóctel</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="pmkWeight">Peso</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="pmkWeight" min="0.1" step="0.1" value="5"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label for="pmkHours">Duración</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="pmkHours" min="0.5" step="0.5" value="2"><span class="unit">horas</span></div>
+        </div>
+        <div class="field" id="pmkPropField">
+          <label for="pmkProp">Dosis Propofol</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="pmkProp" min="0" step="1" value="12"><span class="unit">mg/kg/h</span></div>
+          <span class="hint">Rango 6–24 mg/kg/h · vial 10 mg/mL</span>
+        </div>
+        <div class="field">
+          <label for="pmkMid">Dosis Midazolam</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="pmkMid" min="0" step="0.05" value="0.2"><span class="unit">mg/kg/h</span></div>
+          <span class="hint">Rango 0.1–0.5 mg/kg/h · vial 5 mg/mL</span>
+        </div>
+        <div class="field">
+          <label for="pmkKet">Dosis Ketamina</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="pmkKet" min="0" step="0.1" value="0.6"><span class="unit">mg/kg/h</span></div>
+          <span class="hint">Rango 0.3–1 mg/kg/h · vial 100 mg/mL</span>
+        </div>
+      </div>
+    </div>
+    <div id="pmkAlerts"></div>
+    <div class="result">
+      <div class="result-main"><span class="result-value" id="pmkRate">—</span><span class="result-unit" id="pmkRateLabel">mL/h del cóctel</span></div>
+      <div class="result-sub" id="pmkSub">—</div>
+      <div class="result-secondary">
+        <div class="stat" id="pmkPropStat"><label>Propofol</label><div class="val"><span id="pmkPropMl">—</span><span class="u">mL</span></div></div>
+        <div class="stat"><label>Midazolam</label><div class="val"><span id="pmkMidMl">—</span><span class="u">mL</span></div></div>
+        <div class="stat"><label>Ketamina</label><div class="val"><span id="pmkKetMl">—</span><span class="u">mL</span></div></div>
+      </div>
+    </div>
+    <div class="mix-statement" id="pmkMix">—</div>
+    <div class="formula" id="pmkFormula"></div>
+    <div class="alert alert-info"><span class="icon">i</span><div class="body">Esta jeringa va en una bomba independiente — <strong>no</strong> en la bolsa de mantenimiento. Descontar su velocidad del total de líquidos del paciente.</div></div>
+  </div>
+
   <!-- ============ MODO INSULINA R ============ -->
   <div id="mode-insulin" class="hidden">
     <div class="card">
@@ -775,6 +820,9 @@
   // ---- fármacos adicionales (no en el manual de Moya Bautista) ----
   const EXTRA_DRUGS = [
     // TIVA CÓCTEL
+    { id: 'pmk_combo', name: 'PMK / MK — TIVA (Propofol + Midazolam + Ketamina)', cat: 'Analgesia / Anestesia', mode: 'pmk',
+      desc: 'Cóctel TIVA en una sola jeringa. En gatos se excluye el propofol (riesgo de anemia) → cálculo MK automático.',
+      warn: [] },
     { id: 'pdk_combo', name: 'PDK / DK — TIVA (Propofol + Dexmeto + Ketamina)', cat: 'Analgesia / Anestesia', mode: 'pdk',
       desc: 'Cóctel TIVA en una sola jeringa para mantenimiento anestésico. En gatos se excluye el propofol (riesgo de anemia) → cálculo DK automático.',
       warn: [] },
@@ -900,14 +948,14 @@
     return fmt(n, 2);
   }
 
-  const modeBlocks = { cri: $('mode-cri'), combo: $('mode-combo'), pdk: $('mode-pdk'), insulin: $('mode-insulin'), potassium: $('mode-potassium') };
+  const modeBlocks = { cri: $('mode-cri'), combo: $('mode-combo'), pdk: $('mode-pdk'), pmk: $('mode-pmk'), insulin: $('mode-insulin'), potassium: $('mode-potassium') };
   function showMode(m) {
     Object.keys(modeBlocks).forEach(k => modeBlocks[k].classList.toggle('hidden', k !== m));
   }
 
   function speciesSupported(d, sp) {
     if (d.mode === 'combo') return sp === 'dog';
-    if (d.mode === 'pdk' || d.mode === 'insulin' || d.mode === 'potassium') return true;
+    if (d.mode === 'pdk' || d.mode === 'pmk' || d.mode === 'insulin' || d.mode === 'potassium') return true;
     return d.cri[sp] !== null && d.cri[sp] !== undefined;
   }
 
@@ -988,6 +1036,7 @@
     if (drug.mode === 'cri') return calcCri();
     if (drug.mode === 'combo') return calcCombo();
     if (drug.mode === 'pdk') return calcPdk();
+    if (drug.mode === 'pmk') return calcPmk();
     if (drug.mode === 'insulin') return calcInsulin();
     if (drug.mode === 'potassium') return calcPotassium();
   }
@@ -1180,6 +1229,62 @@
     if (!isCat && ketMl < 0.1) alertBox(box, 'info', `Volumen de ketamina muy pequeño (${fmtSmart(ketMl)} mL). Considerar diluir.`);
   }
 
+  function calcPmk() {
+    const box = $('pmkAlerts'); box.innerHTML = '';
+    const weight = num($('pmkWeight')), hours = num($('pmkHours'));
+    const propD = num($('pmkProp')), midD = num($('pmkMid')), ketD = num($('pmkKet'));
+    const isCat = species === 'cat';
+
+    $('pmkPropField').style.opacity = isCat ? '0.35' : '1';
+    $('pmkProp').disabled = isCat;
+    $('pmkPropStat').style.opacity = isCat ? '0.35' : '1';
+    $('pmkRateLabel').textContent = isCat ? 'mL/h del cóctel MK' : 'mL/h del cóctel PMK';
+
+    if (!weight || weight <= 0 || !hours || hours <= 0) {
+      ['pmkRate', 'pmkPropMl', 'pmkMidMl', 'pmkKetMl'].forEach(i => $(i).textContent = '—');
+      $('pmkMix').textContent = '—'; $('pmkFormula').innerHTML = ''; return;
+    }
+
+    // Propofol 10 mg/mL · Midazolam 5 mg/mL · Ketamina 100 mg/mL
+    const propMlHr = isCat ? 0 : (propD || 0) * weight / 10;
+    const midMlHr  = (midD  || 0) * weight / 5;
+    const ketMlHr  = (ketD  || 0) * weight / 100;
+    const totalMlHr = propMlHr + midMlHr + ketMlHr;
+    const propMl = propMlHr * hours, midMl = midMlHr * hours, ketMl = ketMlHr * hours;
+
+    $('pmkRate').textContent   = fmtSmart(totalMlHr);
+    $('pmkPropMl').textContent = isCat ? '—' : fmtSmart(propMl);
+    $('pmkMidMl').textContent  = fmtSmart(midMl);
+    $('pmkKetMl').textContent  = fmtSmart(ketMl);
+    $('pmkSub').textContent    = `${isCat ? 'Gato' : 'Perro'} de ${fmt(weight)} kg · ${fmt(hours)} h.`;
+
+    const parts = [];
+    if (!isCat && propMl > 0) parts.push(`<strong>${fmtSmart(propMl)} mL propofol</strong>`);
+    if (midMl > 0) parts.push(`<strong>${fmtSmart(midMl)} mL midazolam</strong>`);
+    if (ketMl > 0) parts.push(`<strong>${fmtSmart(ketMl)} mL ketamina</strong>`);
+    $('pmkMix').innerHTML = parts.length
+      ? parts.join(' + ') + ` en una jeringa → <strong>${fmtSmart(totalMlHr)} mL/h</strong> durante ${fmt(hours)} h.`
+      : '—';
+
+    let f = '';
+    if (!isCat) {
+      f += `<div class="label">Propofol (${fmt(propD)} mg/kg/h · 10 mg/mL)</div>`;
+      f += `<div class="step">${fmt(weight)} × ${fmt(propD)} ÷ 10 = <strong>${fmtSmart(propMlHr)} mL/h</strong> → ${fmtSmart(propMl)} mL en ${fmt(hours)} h</div>`;
+    }
+    f += `<div class="label">Midazolam (${fmt(midD)} mg/kg/h · 5 mg/mL)</div>`;
+    f += `<div class="step">${fmt(weight)} × ${fmt(midD)} ÷ 5 = <strong>${fmtSmart(midMlHr)} mL/h</strong> → ${fmtSmart(midMl)} mL en ${fmt(hours)} h</div>`;
+    f += `<div class="label">Ketamina (${fmt(ketD)} mg/kg/h · 100 mg/mL)</div>`;
+    f += `<div class="step">${fmt(weight)} × ${fmt(ketD)} ÷ 100 = <strong>${fmtSmart(ketMlHr)} mL/h</strong> → ${fmtSmart(ketMl)} mL en ${fmt(hours)} h</div>`;
+    f += `<div class="step final">Cóctel total: ${fmtSmart(totalMlHr)} mL/h</div>`;
+    $('pmkFormula').innerHTML = f;
+
+    if (isCat) alertBox(box, 'warn', 'El <strong>propofol no se recomienda en CRI/TIVA en gatos</strong> (riesgo de anemia por cuerpos de Heinz). Se calcula solo Midazolam + Ketamina.');
+    if (!isCat && propD && (propD < 6 || propD > 24)) alertBox(box, 'warn', 'Dosis de propofol fuera del rango habitual (6–24 mg/kg/h).');
+    if (midD && (midD < 0.1 || midD > 0.5)) alertBox(box, 'warn', 'Dosis de midazolam fuera del rango habitual (0.1–0.5 mg/kg/h).');
+    if (ketD && (ketD < 0.3 || ketD > 1)) alertBox(box, 'warn', 'Dosis de ketamina fuera del rango habitual (0.3–1 mg/kg/h).');
+    if (midMl < 0.1) alertBox(box, 'info', `Volumen de midazolam muy pequeño (${fmtSmart(midMl)} mL). Considerar diluir el vial antes de medir.`);
+  }
+
   function calcInsulin() {
     const box = $('insAlerts'); box.innerHTML = '';
     const weight = num($('insWeight')), glu = num($('insGlu'));
@@ -1283,6 +1388,7 @@
   ['weight', 'hours', 'maint'].forEach(id => $(id).addEventListener('input', calc));
   ['cbWeight', 'cbHours', 'cbLido', 'cbKet'].forEach(id => $(id).addEventListener('input', calcCombo));
   ['pdkWeight', 'pdkHours', 'pdkProp', 'pdkDex', 'pdkKet'].forEach(id => $(id).addEventListener('input', calcPdk));
+  ['pmkWeight', 'pmkHours', 'pmkProp', 'pmkMid', 'pmkKet'].forEach(id => $(id).addEventListener('input', calcPmk));
   ['insWeight', 'insGlu'].forEach(id => $(id).addEventListener('input', calcInsulin));
   ['kWeight', 'kSerum', 'kMaint'].forEach(id => $(id).addEventListener('input', calcPotassium));
   $('kBag').addEventListener('input', () => { bagEdited = true; calcPotassium(); });
