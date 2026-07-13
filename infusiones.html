@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<title>Preparación de infusiones CRI — perro y gato</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #f0f2f5;
+    --border: #e1e5eb;
+    --border-strong: #c8ced8;
+    --text: #1a1f2e;
+    --text-muted: #5b6478;
+    --text-dim: #8a93a6;
+    --accent: #0a6e5e;
+    --accent-hover: #095548;
+    --accent-soft: #e6f4f1;
+    --danger: #c4314b;
+    --danger-soft: #fdecef;
+    --warning: #b56b00;
+    --warning-soft: #fdf3e0;
+    --success: #1f7a45;
+    --success-soft: #e8f5ee;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.05);
+    --shadow-strong: 0 8px 28px rgba(15, 23, 42, 0.08);
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overscroll-behavior-y: contain;
+  }
+
+  .app {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: max(32px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(80px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  }
+
+  header { margin-bottom: 28px; }
+  header h1 { font-size: 24px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .card h2 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 0 0 16px;
+  }
+
+  .species-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .species-btn {
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    min-height: 48px;
+  }
+  .species-btn:active { background: var(--accent-soft); }
+  .species-btn:hover:not(:disabled) { border-color: var(--border-strong); color: var(--text); }
+  .species-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .species-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  select.drug-select {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    padding: 13px 12px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--text);
+    min-height: 48px;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235b6478' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 38px;
+  }
+  select.drug-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+  .field .hint { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+  .input-row {
+    display: flex;
+    align-items: stretch;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    transition: border-color 0.15s ease;
+  }
+  .input-row:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .input-row.error { border-color: var(--danger); }
+  .input-row input {
+    flex: 1; border: none; padding: 12px 12px; font-size: 16px; background: transparent;
+    color: var(--text); font-family: inherit; outline: none; width: 100%; min-width: 0;
+    -webkit-appearance: none; appearance: none; border-radius: 0; min-height: 44px;
+  }
+  .input-row input::-webkit-outer-spin-button, .input-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .input-row input[type=number] { -moz-appearance: textfield; }
+  .input-row .unit {
+    display: flex; align-items: center; padding: 0 12px; color: var(--text-dim); font-size: 13px;
+    background: var(--surface-2); border-left: 1px solid var(--border);
+    border-top-right-radius: var(--radius-sm); border-bottom-right-radius: var(--radius-sm);
+  }
+
+  .drug-desc { margin-top: 4px; }
+  .drug-desc .cat-badge {
+    display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--accent); background: var(--accent-soft); border: 1px solid #b3d8d1;
+    padding: 3px 9px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .drug-desc p { margin: 4px 0; font-size: 13px; color: var(--text-muted); }
+  .drug-desc .conc { font-family: var(--mono); font-size: 12px; color: var(--text); }
+
+  details.advanced {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0; margin-bottom: 16px; box-shadow: var(--shadow);
+  }
+  details.advanced summary {
+    cursor: pointer; padding: 16px 22px; font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted); list-style: none;
+    display: flex; align-items: center; justify-content: space-between; user-select: none;
+  }
+  details.advanced summary::-webkit-details-marker { display: none; }
+  details.advanced summary::after { content: "+"; font-size: 18px; color: var(--text-dim); transition: transform 0.2s ease; }
+  details.advanced[open] summary::after { content: "−"; }
+  details.advanced[open] summary { border-bottom: 1px solid var(--border); }
+  details.advanced .content { padding: 20px 22px; }
+
+  .result {
+    background: linear-gradient(180deg, var(--accent-soft) 0%, #ffffff 100%);
+    border: 1.5px solid var(--accent); border-radius: var(--radius);
+    padding: 26px 24px; margin-bottom: 16px; box-shadow: var(--shadow-strong);
+  }
+  .result-main { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; flex-wrap: wrap; }
+  .result-value { font-size: 44px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; line-height: 1; }
+  .result-unit { font-size: 17px; color: var(--text-muted); font-weight: 500; }
+  .result-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
+  .result-secondary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding-top: 18px; border-top: 1px solid var(--border); }
+  .result-secondary .stat label { display: block; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .result-secondary .stat .val { font-size: 20px; font-weight: 600; color: var(--text); }
+  .result-secondary .stat .val .u { font-size: 13px; font-weight: 400; color: var(--text-muted); margin-left: 3px; }
+
+  .mix-statement {
+    background: var(--success-soft); border: 1.5px solid #a9d8bd; border-radius: var(--radius);
+    padding: 18px 22px; margin-bottom: 16px; font-size: 15px; color: var(--text); line-height: 1.55;
+  }
+  .mix-statement strong { color: var(--success); }
+
+  .formula {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 22px; margin-bottom: 16px; font-family: var(--mono); font-size: 13px; color: var(--text-muted); box-shadow: var(--shadow);
+  }
+  .formula .step { margin: 8px 0; color: var(--text); }
+  .formula .step.final { color: var(--accent); font-weight: 600; }
+  .formula .label {
+    color: var(--text-dim); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin: 14px 0 6px;
+  }
+  .formula .label:first-child { margin-top: 0; }
+
+  .alert { border-radius: var(--radius); padding: 12px 16px; margin-bottom: 12px; font-size: 14px; border: 1px solid; display: flex; gap: 10px; align-items: flex-start; }
+  .alert-danger { background: var(--danger-soft); border-color: #f5b0bb; color: var(--danger); }
+  .alert-warn { background: var(--warning-soft); border-color: #f0d29a; color: var(--warning); }
+  .alert-info { background: var(--accent-soft); border-color: #b3d8d1; color: var(--accent); }
+  .alert .icon { font-weight: 700; flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: currentColor; color: white; text-align: center; line-height: 18px; font-size: 11px; margin-top: 2px; }
+  .alert .body { flex: 1; }
+  .alert strong { font-weight: 600; }
+
+  .reftable { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+  .reftable th, .reftable td { border: 1px solid var(--border); padding: 8px 10px; text-align: center; }
+  .reftable th { background: var(--surface-2); color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .reftable tr.hl td { background: var(--accent-soft); font-weight: 600; color: var(--accent); }
+
+  .topnav { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; margin-bottom: 14px; color: var(--text-dim); }
+  .topnav a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed transparent; }
+  .topnav a:hover { border-bottom-color: var(--accent); }
+  .topnav .here { color: var(--text); font-weight: 600; }
+
+  footer.note { margin-top: 28px; padding: 16px 0; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 12px; line-height: 1.6; }
+  footer.note p { margin: 4px 0; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 640px) {
+    .app { padding: 20px 16px 60px; }
+    .grid { grid-template-columns: 1fr; }
+    .result-secondary { grid-template-columns: 1fr; gap: 12px; }
+    .result-value { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="topnav">
+    <span>Calculadoras:</span>
+    <a href="./">Transfusión</a>
+    <a href="./shockwave.html">Ondas de choque</a>
+    <a href="./protocolos.html">Protocolos de fisioterapia</a>
+    <a href="./bicipital.html">Rehab bicipital</a>
+    <span class="here">Infusiones CRI</span>
+  </div>
+
+  <header>
+    <h1>Preparación de infusiones CRI</h1>
+    <p>Infusiones intravenosas de velocidad constante para perros y gatos — bolo de carga, volumen del fármaco y mezcla final</p>
+  </header>
+
+  <div class="card">
+    <h2>Fármaco</h2>
+    <div class="field">
+      <select id="drugSelect" class="drug-select"></select>
+    </div>
+    <div class="drug-desc" id="drugDesc"></div>
+  </div>
+
+  <div class="card">
+    <h2>Especie</h2>
+    <div class="species-toggle">
+      <button type="button" class="species-btn" data-species="dog">Perro</button>
+      <button type="button" class="species-btn" data-species="cat">Gato</button>
+    </div>
+  </div>
+
+  <!-- ============ MODO CRI (genérico) ============ -->
+  <div id="mode-cri">
+    <div class="card">
+      <h2>Paciente e infusión</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="weight">Peso</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="weight" min="0.1" step="0.1" value="5"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label for="hours">Duración de la infusión</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="hours" min="0.5" step="0.5" value="4"><span class="unit">horas</span></div>
+        </div>
+        <div class="field" style="grid-column: 1 / -1;">
+          <label for="criDose">Dosis de CRI <span id="criDoseUnitLabel" style="color:var(--text-dim)"></span></label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="criDose" min="0" step="0.01"><span class="unit" id="criDoseUnit">—</span></div>
+          <span class="hint" id="criDoseHint"></span>
+        </div>
+      </div>
+    </div>
+
+    <details class="advanced">
+      <summary>Parámetros avanzados</summary>
+      <div class="content">
+        <div class="grid">
+          <div class="field">
+            <label for="maint">Terapia de mantenimiento</label>
+            <div class="input-row"><input type="number" inputmode="decimal" id="maint" min="20" max="100" step="1" value="60"><span class="unit">mL/kg/día</span></div>
+            <span class="hint">Manual: 60 mL/kg/día. Reducir en cardiópatas/geriátricos.</span>
+          </div>
+          <div class="field">
+            <label for="conc">Concentración del vial</label>
+            <div class="input-row"><input type="number" inputmode="decimal" id="conc" min="0.0001" step="any"><span class="unit" id="concUnit">—</span></div>
+            <span class="hint" id="concHint"></span>
+          </div>
+          <div class="field">
+            <label for="bolusDose">Dosis de bolo de carga</label>
+            <div class="input-row"><input type="number" inputmode="decimal" id="bolusDose" min="0" step="0.01"><span class="unit" id="bolusDoseUnit">—</span></div>
+            <span class="hint" id="bolusDoseHint"></span>
+          </div>
+          <div class="field">
+            <label for="bagVol">Volumen de bolsa / bureta</label>
+            <div class="input-row"><input type="number" inputmode="decimal" id="bagVol" min="1" step="1"><span class="unit">mL</span></div>
+            <span class="hint">Auto = velocidad de infusión × horas. Edítalo si usas otra bolsa.</span>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <div id="criAlerts"></div>
+
+    <div class="result">
+      <div class="result-main">
+        <span class="result-value" id="criDrugMl">—</span>
+        <span class="result-unit" id="criDrugName">del fármaco a la bolsa</span>
+      </div>
+      <div class="result-sub" id="criSub">—</div>
+      <div class="result-secondary">
+        <div class="stat"><label>Velocidad de infusión</label><div class="val"><span id="criRate">—</span><span class="u">mL/h</span></div></div>
+        <div class="stat"><label>Bolo de carga</label><div class="val"><span id="criBolus">—</span><span class="u">mL</span></div></div>
+        <div class="stat"><label>Volumen de bolsa</label><div class="val"><span id="criBag">—</span><span class="u">mL</span></div></div>
+      </div>
+    </div>
+
+    <div class="mix-statement" id="criMix">—</div>
+
+    <div class="formula" id="criFormula"></div>
+  </div>
+
+  <!-- ============ MODO COMBO Lidocaína/Ketamina ============ -->
+  <div id="mode-combo" class="hidden">
+    <div class="card">
+      <h2>Paciente e infusión (perro)</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="cbWeight">Peso</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="cbWeight" min="0.1" step="0.1" value="5"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label for="cbHours">Duración</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="cbHours" min="0.5" step="0.5" value="4"><span class="unit">horas</span></div>
+        </div>
+        <div class="field">
+          <label for="cbLido">CRI Lidocaína</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="cbLido" min="0" step="1" value="30"><span class="unit">mcg/kg/min</span></div>
+          <span class="hint">Rango 30–50 mcg/kg/min · vial 20 mg/mL</span>
+        </div>
+        <div class="field">
+          <label for="cbKet">CRI Ketamina</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="cbKet" min="0" step="0.5" value="3"><span class="unit">mcg/kg/min</span></div>
+          <span class="hint">Rango 3–10 mcg/kg/min · vial 100 mg/mL</span>
+        </div>
+      </div>
+    </div>
+    <div id="comboAlerts"></div>
+    <div class="result">
+      <div class="result-main"><span class="result-value" id="cbTotalMl">—</span><span class="result-unit">mL de fármacos en la bolsa</span></div>
+      <div class="result-sub" id="cbSub">—</div>
+      <div class="result-secondary">
+        <div class="stat"><label>Lidocaína</label><div class="val"><span id="cbLidoMl">—</span><span class="u">mL</span></div></div>
+        <div class="stat"><label>Ketamina</label><div class="val"><span id="cbKetMl">—</span><span class="u">mL</span></div></div>
+        <div class="stat"><label>Velocidad</label><div class="val"><span id="cbRate">—</span><span class="u">mL/h</span></div></div>
+      </div>
+    </div>
+    <div class="mix-statement" id="cbMix">—</div>
+    <div class="formula" id="cbFormula"></div>
+    <div class="alert alert-info"><span class="icon">i</span><div class="body">Bolos de carga: <strong>Lidocaína 2–4 mg/kg</strong> · <strong>Ketamina 0.3–0.5 mg/kg</strong> (administrados aparte, antes de iniciar la CRI).</div></div>
+  </div>
+
+  <!-- ============ MODO INSULINA R ============ -->
+  <div id="mode-insulin" class="hidden">
+    <div class="card">
+      <h2>Paciente</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="insWeight">Peso</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="insWeight" min="0.1" step="0.1" value="5"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label for="insGlu">Glucemia actual</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="insGlu" min="1" step="1" value="200"><span class="unit">mg/dL</span></div>
+          <span class="hint">Determina la velocidad del CRI y el % de glucosa.</span>
+        </div>
+      </div>
+    </div>
+    <div id="insAlerts"></div>
+    <div class="result">
+      <div class="result-main"><span class="result-value" id="insCriRate">—</span><span class="result-unit">mL/h de velocidad del CRI</span></div>
+      <div class="result-sub" id="insSub">Insulina R en 100 mL de NaCl 0.9% (bureta), ajustada por glucemia.</div>
+      <div class="result-secondary">
+        <div class="stat"><label>Insulina R</label><div class="val"><span id="insDoseU">—</span><span class="u">U</span></div></div>
+        <div class="stat"><label>Volumen insulina</label><div class="val"><span id="insDoseMl">—</span><span class="u">mL</span></div></div>
+        <div class="stat"><label>Glucosar</label><div class="val"><span id="insGlucPct">—</span></div></div>
+      </div>
+    </div>
+    <div class="mix-statement" id="insMix">—</div>
+    <table class="reftable" id="insTable">
+      <thead><tr><th>Glucemia (mg/dL)</th><th>CRI (mL/h)</th><th>Glucosar NaCl</th></tr></thead>
+      <tbody>
+        <tr data-band="gt250"><td>&gt; 250</td><td>10</td><td>NO</td></tr>
+        <tr data-band="200"><td>200–250</td><td>7</td><td>2.5 %</td></tr>
+        <tr data-band="150"><td>150–199</td><td>5</td><td>2.5 %</td></tr>
+        <tr data-band="100"><td>100–149</td><td>5</td><td>5 %</td></tr>
+        <tr data-band="lt100"><td>&lt; 100</td><td>0</td><td>5 %</td></tr>
+      </tbody>
+    </table>
+    <div class="alert alert-info" style="margin-top:12px"><span class="icon">i</span><div class="body">Dosis fija <strong>0.88 U/kg</strong> · vial 100 U/mL. Glucosar = (100 mL × %deseado) ÷ 50 % de dextrosa. <strong>Monitorear glucemia periódicamente</strong> y ajustar el nivel de glucosa; una vez estabilizado, cambiar a otra insulina.</div></div>
+  </div>
+
+  <!-- ============ MODO POTASIO KCl ============ -->
+  <div id="mode-potassium" class="hidden">
+    <div class="card">
+      <h2>Paciente</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="kWeight">Peso</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="kWeight" min="0.1" step="0.1" value="5"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label for="kSerum">K⁺ sérico</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="kSerum" min="0.5" max="6" step="0.1" value="2.5"><span class="unit">mEq/L</span></div>
+        </div>
+        <div class="field">
+          <label for="kMaint">Terapia de mantenimiento</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="kMaint" min="20" max="100" step="1" value="60"><span class="unit">mL/kg/día</span></div>
+        </div>
+        <div class="field">
+          <label for="kBag">Volumen de bolsa / bureta</label>
+          <div class="input-row"><input type="number" inputmode="decimal" id="kBag" min="1" step="1" value="300"><span class="unit">mL</span></div>
+          <span class="hint">Auto = mantenimiento × peso. Usar bureta.</span>
+        </div>
+      </div>
+    </div>
+    <div id="kAlerts"></div>
+    <div class="result">
+      <div class="result-main"><span class="result-value" id="kMl">—</span><span class="result-unit">mL de KCl a agregar</span></div>
+      <div class="result-sub" id="kSub">—</div>
+      <div class="result-secondary">
+        <div class="stat"><label>mEq de KCl</label><div class="val"><span id="kMeq">—</span><span class="u">mEq</span></div></div>
+        <div class="stat"><label>Velocidad de infusión</label><div class="val"><span id="kRate">—</span><span class="u">mL/h</span></div></div>
+        <div class="stat"><label>Aporte de K⁺</label><div class="val"><span id="kRateMeq">—</span><span class="u">mEq/kg/h</span></div></div>
+      </div>
+    </div>
+    <div class="mix-statement" id="kMix">—</div>
+    <table class="reftable" id="kTable">
+      <thead><tr><th>K⁺ sérico (mEq/L)</th><th>KCl en 1 L</th><th>KCl en 250 mL</th><th>CRI máx (mL/kg/h)</th></tr></thead>
+      <tbody>
+        <tr data-band="lt2"><td>&lt; 2.0</td><td>80 mEq</td><td>20 mEq</td><td>6</td></tr>
+        <tr data-band="2.1"><td>2.1–2.5</td><td>60 mEq</td><td>15 mEq</td><td>8</td></tr>
+        <tr data-band="2.6"><td>2.6–3.0</td><td>40 mEq</td><td>10 mEq</td><td>12</td></tr>
+        <tr data-band="3.1"><td>3.1–3.5</td><td>28 mEq</td><td>7 mEq</td><td>18</td></tr>
+        <tr data-band="3.6"><td>3.6–5.0</td><td>20 mEq</td><td>5 mEq</td><td>25</td></tr>
+      </tbody>
+    </table>
+    <div class="alert alert-warn" style="margin-top:12px"><span class="icon">!</span><div class="body">Regla de seguridad: <strong>nunca sobrepasar 0.5 mEq/kg/h</strong> de aporte de potasio ni el CRI máx de la tabla. Vial KCl 4 mEq/mL. Monitorización cardíaca recomendada.</div></div>
+  </div>
+
+  <!-- ============ AYUDANTE: Glucosar solución ============ -->
+  <details class="advanced">
+    <summary>Ayudante · Glucosar una solución</summary>
+    <div class="content">
+      <p style="margin-top:0;font-size:13px;color:var(--text-muted)">Fórmula: (mL deseados × % de glucosa deseado) ÷ % de glucosa disponible. Después resta ese volumen de la solución base.</p>
+      <div class="grid">
+        <div class="field"><label for="gMl">mL de solución a glucosar</label><div class="input-row"><input type="number" inputmode="decimal" id="gMl" min="1" step="1" value="100"><span class="unit">mL</span></div></div>
+        <div class="field"><label for="gWant">% de glucosa deseado</label><div class="input-row"><input type="number" inputmode="decimal" id="gWant" min="0.1" step="0.1" value="5"><span class="unit">%</span></div></div>
+        <div class="field"><label for="gHave">% de glucosa disponible</label><div class="input-row"><input type="number" inputmode="decimal" id="gHave" min="1" step="1" value="50"><span class="unit">%</span></div><span class="hint">Normalmente Dextrosa 50 %.</span></div>
+      </div>
+      <div class="mix-statement" id="gOut" style="margin-top:14px">—</div>
+    </div>
+  </details>
+
+  <!-- ============ Reglas para combinar infusiones ============ -->
+  <details class="advanced">
+    <summary>Reglas para combinar infusiones</summary>
+    <div class="content" style="font-size:13px;color:var(--text-muted);line-height:1.6">
+      <p><strong>1.</strong> Combinar solo infusiones con fórmulas parecidas (p.ej. Lidocaína + Ketamina, ambas mcg/kg/min). No mezclar mg/kg/24 h con mcg/kg/min.</p>
+      <p><strong>2.</strong> Combinar solo infusiones con velocidades CRI similares (Furosemida + Cefepima van a mantenimiento; el K⁺ no debe ir a velocidad de mantenimiento).</p>
+      <p><strong>3.</strong> Evitar combinar fármacos antagonistas o de riesgo (Dopamina + Metoclopramida se antagonizan; Dexmedetomidina + Morfina = riesgo elevado de depresión respiratoria y muerte).</p>
+      <p><strong>4.</strong> Resta a la terapia de líquidos el volumen (CRI o glucosa) de cada componente combinado.</p>
+      <p><strong>5.</strong> Ajusta la velocidad de la infusión con base en los mL/h de mantenimiento, <strong>nunca sobre un % de deshidratación</strong>.</p>
+    </div>
+  </details>
+
+  <footer class="note">
+    <p><strong>Recordatorios clínicos:</strong></p>
+    <p>· La velocidad de la infusión se ajusta a la <strong>terapia de mantenimiento</strong> (mL/h), nunca sobre un porcentaje de deshidratación.</p>
+    <p>· Verifica dos veces la <strong>concentración del vial</strong> antes de calcular — las presentaciones varían entre laboratorios.</p>
+    <p>· Revisa compatibilidad, contraindicaciones y monitorización de cada fármaco antes de administrar.</p>
+    <p style="margin-top:10px;color:var(--text-dim)">Basado en el <em>Manual de Infusiones Intravenosas de Velocidad Constante para Perros y Gatos</em> (Pablo Moya Bautista). Fuentes: Papich, <em>Saunders Handbook of Veterinary Drugs</em>; Plumb, <em>Veterinary Drug Handbook</em>; Silverstein &amp; Hopper, <em>Small Animal Critical Care Medicine</em>. Herramienta de apoyo — no sustituye el criterio clínico.</p>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+
+  // ---- unit conversion (mass) to a mg base for the mcg/mg/ng family ----
+  const MG = { ng: 1e-6, mcg: 1e-3, mg: 1 };
+  function convert(value, fromUnit, toUnit) {
+    if (fromUnit === toUnit) return value;
+    if (MG[fromUnit] !== undefined && MG[toUnit] !== undefined) return value * MG[fromUnit] / MG[toUnit];
+    return value; // U, mEq — assumed same unit within a drug
+  }
+  const perFactor = { min: 60, hr: 1, day: 1 / 24 }; // multiplier to reach "per hour"
+
+  // ---- drug database (from the manual) ----
+  // conc: {v: value, u: unit-per-mL, label}
+  // cri:  {dog:[min,max]|null, cat:[min,max]|null, mass, per, unit}
+  // bolus:{dog:{min,max,u,note}|null, cat:{...}|null}
+  const DRUGS = [
+    // ---------- ANALGÉSICAS ----------
+    { id: 'buprenorfina', name: 'Buprenorfina', cat: 'Analgésica', mode: 'cri',
+      conc: { v: 300, u: 'mcg', label: '0.3 mg/mL (300 mcg/mL)' },
+      cri: { dog: [2.5, 2.5], cat: null, mass: 'mcg', per: 'hr', unit: 'mcg/kg/h' },
+      bolus: { dog: { min: 15, max: 15, u: 'mcg' }, cat: null },
+      desc: 'Opioide agonista parcial μ / antagonista κ. 25–50× más potente que la morfina, sin efecto techo. Dolor leve a moderado.',
+      warn: [] },
+    { id: 'dexmedetomidina', name: 'Dexmedetomidina', cat: 'Analgésica', mode: 'cri',
+      conc: { v: 1000, u: 'mcg', label: '1 mg/mL (1000 mcg/mL)' },
+      cri: { dog: [1.0, 3.0], cat: null, mass: 'mcg', per: 'hr', unit: 'mcg/kg/h' },
+      bolus: { dog: { min: 1, max: 1, u: 'mcg' }, cat: null },
+      desc: 'Agonista α2 adrenérgico (doble potencia que la medetomidina). Sedación y analgesia.',
+      warn: [{ l: 'warn', t: 'Puede reducir el gasto cardíaco ~40 % y causar bradicardia e hipertensión inicial.' }] },
+    { id: 'fentanilo', name: 'Fentanilo', cat: 'Analgésica', mode: 'cri',
+      conc: { v: 50, u: 'mcg', label: '0.05 mg/mL (50 mcg/mL)' },
+      cri: { dog: [2.5, 10.0], cat: [2.0, 2.0], mass: 'mcg', per: 'hr', unit: 'mcg/kg/h' },
+      bolus: { dog: { min: 5, max: 5, u: 'mcg' }, cat: { min: 3, max: 3, u: 'mcg' } },
+      desc: 'Opioide agonista μ, 80–100× más potente que la morfina. Dolor moderado a severo.',
+      warn: [{ l: 'warn', t: 'Puede provocar sedación, constipación, bradicardia y depresión respiratoria.' }] },
+    { id: 'ketamina', name: 'Ketamina', cat: 'Analgésica', mode: 'cri',
+      conc: { v: 100000, u: 'mcg', label: '100 mg/mL (100 000 mcg/mL)' },
+      cri: { dog: [2.5, 15], cat: [2.5, 15], mass: 'mcg', per: 'min', unit: 'mcg/kg/min' },
+      bolus: { dog: { min: 0.3, max: 0.5, u: 'mg' }, cat: { min: 0.3, max: 0.5, u: 'mg' } },
+      desc: 'Anestésico disociativo, antagonista no competitivo NMDA. Modula el dolor moderado a severo.',
+      warn: [{ l: 'info', t: 'Perioperatoria 5–10 · Postquirúrgica/combinación 2.5–4 · Dolor severo 15 mcg/kg/min (precaución). Efectos: apnea, salivación, midriasis, regurgitación.' }] },
+    { id: 'lidocaina_perro', name: 'Lidocaína (perro)', cat: 'Analgésica / Antiarrítmica', mode: 'cri', onlyDog: true,
+      conc: { v: 20000, u: 'mcg', label: '20 mg/mL (20 000 mcg/mL)' },
+      cri: { dog: [25, 100], cat: null, mass: 'mcg', per: 'min', unit: 'mcg/kg/min' },
+      bolus: { dog: { min: 2, max: 4, u: 'mg' }, cat: null },
+      desc: 'Bloqueo de canales de sodio (analgesia). Su metabolito MEGX tiene propiedades antiarrítmicas (arritmias ventriculares).',
+      warn: [] },
+    { id: 'lidocaina_gato', name: 'Lidocaína (gato)', cat: 'Analgésica / Antiarrítmica', mode: 'cri', onlyCat: true,
+      conc: { v: 20000, u: 'mcg', label: '20 mg/mL (20 000 mcg/mL)' },
+      cri: { dog: null, cat: [10, 40], mass: 'mcg', per: 'min', unit: 'mcg/kg/min' },
+      bolus: { dog: null, cat: { min: 0.5, max: 1, u: 'mg' } },
+      desc: 'En gato tiene mayor sensibilidad a los efectos cardíacos.',
+      warn: [{ l: 'danger', t: 'GATO: dosis IV han provocado muerte, depresión cardiovascular, hipoxia tisular, metahemoglobinemia y hemólisis. Usar con extrema precaución.' }] },
+    { id: 'medetomidina', name: 'Medetomidina', cat: 'Analgésica', mode: 'cri', onlyDog: true,
+      conc: { v: 1000, u: 'mcg', label: '1 mg/mL (1000 mcg/mL)' },
+      cri: { dog: [1.5, 1.5], cat: null, mass: 'mcg', per: 'hr', unit: 'mcg/kg/h' },
+      bolus: { dog: { min: 1, max: 1, u: 'mcg' }, cat: null },
+      desc: 'Agonista α2 adrenérgico (50 % dexmedetomidina + 50 % levomedetomidina). Sedación y analgesia.',
+      warn: [{ l: 'warn', t: 'Puede reducir el gasto cardíaco ~40 % y causar bradicardia e hipertensión inicial.' }] },
+    { id: 'morfina', name: 'Morfina', cat: 'Analgésica', mode: 'cri',
+      conc: { v: 1, u: 'mg', label: '1 mg/mL' },
+      cri: { dog: [0.1, 1.0], cat: [0.1, 0.3], mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 0.2, max: 0.2, u: 'mg' }, cat: { min: 0.2, max: 0.2, u: 'mg' } },
+      desc: 'Opioide agonista μ y κ. Inhibe neurotransmisores excitatorios (sustancia P).',
+      warn: [{ l: 'warn', t: 'Efectos: sedación, vómito, constipación, retención urinaria, bradicardia, jadeo.' }] },
+    { id: 'lk_combo', name: 'Lidocaína / Ketamina (combo)', cat: 'Analgésica', mode: 'combo', onlyDog: true,
+      desc: 'Combinación analgésica (perro). Ambas a mcg/kg/min, por eso se pueden mezclar en la misma bolsa.',
+      warn: [] },
+
+    // ---------- ANTIBIÓTICAS ----------
+    { id: 'cefepima', name: 'Cefepima', cat: 'Antibiótica', mode: 'cri', onlyDog: true,
+      conc: { v: 100, u: 'mg', label: '100 mg/mL' },
+      cri: { dog: [1.1, 1.1], cat: null, mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 0.4, max: 0.4, u: 'mg' }, cat: null },
+      desc: 'Cefalosporina de 4ª generación, amplio espectro Gram (−/+). Para infecciones graves.',
+      warn: [{ l: 'info', t: 'No efectiva contra enterococos, L. monocytogenes ni estafilococos meticilino-resistentes.' }] },
+    { id: 'ceftriaxona', name: 'Ceftriaxona', cat: 'Antibiótica', mode: 'cri', onlyDog: true,
+      conc: { v: 100, u: 'mg', label: '100 mg/mL' },
+      cri: { dog: [1.9, 1.9], cat: null, mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 1.9, max: 1.9, u: 'mg' }, cat: null },
+      desc: 'Cefalosporina de 3ª generación, amplio espectro Gram (−/+). Penetra bien en SNC (útil en Lyme, Enterobacteriaceae).',
+      warn: [] },
+    { id: 'vancomicina', name: 'Vancomicina', cat: 'Antibiótica', mode: 'cri', onlyDog: true,
+      conc: { v: 50, u: 'mg', label: '50 mg/mL' },
+      cri: { dog: [1.5, 1.5], cat: null, mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 3.5, max: 3.5, u: 'mg' }, cat: null },
+      desc: 'Glucopéptido muy efectivo contra Gram (+) (Streptococcus, Enterococcus, SARM). No efectivo contra Gram (−).',
+      warn: [{ l: 'warn', t: 'Administrar en dextrosa al 5 %. No infundir demasiado rápido.' }] },
+
+    // ---------- ANTICONVULSIVAS ----------
+    { id: 'diazepam', name: 'Diazepam', cat: 'Anticonvulsiva', mode: 'cri',
+      conc: { v: 5, u: 'mg', label: '5 mg/mL' },
+      cri: { dog: [1, 1], cat: [1, 1], mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 0.25, max: 0.5, u: 'mg' }, cat: { min: 0.25, max: 0.5, u: 'mg' } },
+      desc: 'Benzodiacepina que potencia el receptor GABA. Ansiolítico, sedante, relajante muscular y anticonvulsivo. Status epilepticus.',
+      warn: [] },
+    { id: 'midazolam', name: 'Midazolam', cat: 'Anticonvulsiva', mode: 'cri',
+      conc: { v: 5, u: 'mg', label: '5 mg/mL' },
+      cri: { dog: [0.1, 0.5], cat: [0.1, 0.5], mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 0.25, max: 0.5, u: 'mg' }, cat: { min: 0.25, max: 0.5, u: 'mg' } },
+      desc: 'Benzodiacepina hidrosoluble. Potencia el receptor GABA. Sedante y anticonvulsivo.',
+      warn: [] },
+    { id: 'pentobarbital', name: 'Pentobarbital', cat: 'Anticonvulsiva', mode: 'cri',
+      conc: { v: 63, u: 'mg', label: '63 mg/mL' },
+      cri: { dog: [0.2, 1], cat: [0.2, 1], mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 2, max: 15, u: 'mg', note: 'hasta efecto' }, cat: { min: 2, max: 15, u: 'mg', note: 'hasta efecto' } },
+      desc: 'Barbitúrico (unión a GABA). Última opción en status epilepticus.',
+      warn: [{ l: 'warn', t: 'El paciente puede dejar de convulsionar aparentemente pero seguir convulsionando a nivel intracraneal.' }] },
+    { id: 'propofol', name: 'Propofol', cat: 'Anticonvulsiva', mode: 'cri', onlyDog: true,
+      conc: { v: 10, u: 'mg', label: '10 mg/mL' },
+      cri: { dog: [0.1, 0.6], cat: null, mass: 'mg', per: 'min', unit: 'mg/kg/min' },
+      bolus: { dog: { min: 1, max: 6, u: 'mg', note: 'hasta efecto' }, cat: null },
+      desc: 'Aumenta la conductancia de Cl⁻ (GABAa). Usado en status epilepticus.',
+      warn: [{ l: 'warn', t: 'Apnea y depresión respiratoria como efectos secundarios.' }] },
+
+    // ---------- ANTIARRÍTMICAS Y ANTIHIPERTENSIVAS ----------
+    { id: 'diltiazem', name: 'Diltiazem', cat: 'Antiarrítmica / Antihipertensiva', mode: 'cri', onlyDog: true,
+      conc: { v: 5000, u: 'mcg', label: '5 mg/mL (5000 mcg/mL)' },
+      cri: { dog: [1, 8], cat: null, mass: 'mcg', per: 'min', unit: 'mcg/kg/min' },
+      bolus: { dog: { min: 0.15, max: 0.25, u: 'mg', note: 'en 2 min' }, cat: null },
+      desc: 'Bloqueador de canales de calcio. Ralentiza la conducción AV. Hipertensión, arritmias supraventriculares, fibrilación/flutter atrial, cardiomiopatía hipertrófica.',
+      warn: [{ l: 'info', t: 'Solo perros. En perros puede mejorar la perfusión renal.' }] },
+    { id: 'esmolol', name: 'Esmolol', cat: 'Antihipertensiva', mode: 'cri',
+      conc: { v: 10000, u: 'mcg', label: '10 mg/mL (10 000 mcg/mL)' },
+      cri: { dog: [50, 200], cat: [50, 200], mass: 'mcg', per: 'min', unit: 'mcg/kg/min' },
+      bolus: { dog: { min: 0.5, max: 1.0, u: 'mg', note: 'en 30 min' }, cat: { min: 0.5, max: 1.0, u: 'mg', note: 'en 30 min' } },
+      desc: 'Betabloqueador (β1). Control a corto plazo de la hipertensión sistémica.',
+      warn: [{ l: 'danger', t: 'Contraindicado en bradicardia o bloqueos AV. Precaución: depresión miocárdica, gasto cardíaco reducido, cardiomiopatía dilatada.' }] },
+
+    // ---------- INSUFICIENCIA CARDÍACA Y CHOQUE ----------
+    { id: 'dobutamina', name: 'Dobutamina', cat: 'Insuf. cardíaca / Choque', mode: 'cri',
+      conc: { v: 12500, u: 'mcg', label: '12.5 mg/mL (12 500 mcg/mL)' },
+      cri: { dog: [5.0, 20], cat: [1.0, 5.0], mass: 'mcg', per: 'min', unit: 'mcg/kg/min' },
+      bolus: { dog: null, cat: null },
+      desc: 'Inotrópico positivo (β1 directo). Útil en choque cuando la fluidoterapia no restablece la presión.',
+      warn: [{ l: 'warn', t: 'Digitalización previa recomendada. Contraindicada en estenosis subaórtica hipertrófica y arritmias ventriculares; corregir la hipovolemia antes.' }] },
+    { id: 'dopamina', name: 'Dopamina', cat: 'Insuf. cardíaca / Choque', mode: 'cri',
+      conc: { v: 40000, u: 'mcg', label: '40 mg/mL (40 000 mcg/mL)' },
+      cri: { dog: [0.5, 20], cat: [0.5, 20], mass: 'mcg', per: 'min', unit: 'mcg/kg/min' },
+      bolus: { dog: null, cat: null },
+      desc: 'Inotrópico adrenérgico/dopaminérgico (precursor de norepinefrina).',
+      warn: [{ l: 'info', t: 'Rangos: 0.5–2 vasodilatación · 2–10 falla cardiaca/choque · >10 vasoconstricción (mcg/kg/min). NO mejora la oliguria en gatos. Contraindicado en feocromocitoma, fibrilación ventricular, taquiarritmias no corregidas.' }] },
+
+    // ---------- ANAFILAXIA Y CHOQUE ----------
+    { id: 'epinefrina', name: 'Epinefrina', cat: 'Anafilaxia / Choque', mode: 'cri',
+      conc: { v: 1000, u: 'mcg', label: '1 mg/mL (1000 mcg/mL)' },
+      cri: { dog: [0.01, 3.0], cat: [0.01, 3.0], mass: 'mcg', per: 'min', unit: 'mcg/kg/min' },
+      bolus: { dog: null, cat: null },
+      desc: 'Agonista adrenérgico potente (α1/2, β1/2). Vasoconstricción, aumenta gasto cardíaco y presión; inhibe mediadores anafilácticos.',
+      warn: [] },
+
+    // ---------- DIURÉTICAS ----------
+    { id: 'furosemida', name: 'Furosemida', cat: 'Diurética', mode: 'cri',
+      conc: { v: 50, u: 'mg', label: '50 mg/mL' },
+      cri: { dog: [0.66, 1.0], cat: [0.66, 1.0], mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 0.66, max: 0.66, u: 'mg' }, cat: { min: 0.66, max: 0.66, u: 'mg' } },
+      desc: 'Diurético de asa (inhibe Na/K/2Cl en asa de Henle). Útil en edema pulmonar.',
+      warn: [{ l: 'warn', t: 'No usar en pacientes deshidratados. Precaución en enfermedad renal o con fármacos de eliminación renal.' }] },
+    { id: 'manitol', name: 'Manitol', cat: 'Diurética', mode: 'cri',
+      conc: { v: 200, u: 'mg', label: '200 mg/mL' },
+      cri: { dog: [1.0, 2.0], cat: [1.0, 2.0], mass: 'mg', per: 'min', unit: 'mg/kg/min' },
+      bolus: { dog: { min: 250, max: 1000, u: 'mg', note: 'lento' }, cat: { min: 250, max: 1000, u: 'mg', note: 'lento' } },
+      desc: 'Diurético hiperosmótico. Edema cerebral, glaucoma agudo, oliguria/anuria, edema tisular.',
+      warn: [] },
+
+    // ---------- ANTITROMBÓTICAS ----------
+    { id: 'heparina', name: 'Heparina', cat: 'Antitrombótica', mode: 'cri',
+      conc: { v: 1000, u: 'U', label: '1000 U/mL' },
+      cri: { dog: [25, 50], cat: [25, 50], mass: 'U', per: 'hr', unit: 'U/kg/h' },
+      bolus: { dog: { min: 100, max: 100, u: 'U' }, cat: { min: 100, max: 100, u: 'U' } },
+      desc: 'Anticoagulante (inactiva factor Xa; evita el crecimiento de coágulos de fibrina). No lisa coágulos.',
+      warn: [{ l: 'danger', t: 'Extremo cuidado (UCI). Monitorizar la coagulación.' }] },
+
+    // ---------- COLOIDES ----------
+    { id: 'hetastarch', name: 'Hetastarch', cat: 'Coloide', mode: 'cri', standalone: true,
+      conc: { v: 1, u: 'ml', label: 'coloide sintético (se infunde sin diluir)' },
+      cri: { dog: [0.4, 0.8], cat: [0.2, 0.4], mass: 'ml', per: 'hr', unit: 'mL/kg/h' },
+      bolus: { dog: null, cat: null },
+      desc: 'Coloide sintético expansor de volumen. Hipovolemia aguda y estado de choque. Se administra por bureta, sin diluir en Hartman.',
+      warn: [{ l: 'info', t: 'Colocar el volumen calculado en una bureta y ajustar la infusora a (dosis × peso) mL/h.' }] },
+
+    // ---------- ANTIEMÉTICAS / GASTROPARESIA ----------
+    { id: 'metoclopramida', name: 'Metoclopramida', cat: 'Antiemética / Gastroparesia', mode: 'cri',
+      conc: { v: 10, u: 'mg', label: '10 mg/mL' },
+      cri: { dog: [1, 2], cat: [1, 2], mass: 'mg', per: 'day', unit: 'mg/kg/24 h' },
+      bolus: { dog: null, cat: null },
+      desc: 'Procinético del tracto GI superior y antiemético de acción central. Antagonista de dopamina.',
+      warn: [] },
+
+    // ---------- ESPECIALES ----------
+    { id: 'glucagon', name: 'Glucagón', cat: 'Especial', mode: 'cri',
+      conc: { v: 1000, u: 'ng', label: '1000 ng/mL (vial reconstituido en 1000 mL de NaCl 0.9 %)' },
+      cri: { dog: [5, 40], cat: [5, 40], mass: 'ng', per: 'min', unit: 'ng/kg/min' },
+      bolus: { dog: { min: 50, max: 50, u: 'ng' }, cat: { min: 50, max: 50, u: 'ng' } },
+      desc: 'Hormona que aumenta la glucemia por glucogenólisis hepática. Para pacientes con exceso de insulina (insulinoma).',
+      warn: [{ l: 'info', t: 'Reconstituir el vial y aforar a 1000 mL de NaCl 0.9 % → concentración 1000 ng/mL antes de calcular. 1 mg = 1 000 000 ng.' }] },
+    { id: 'gluconato_calcio', name: 'Gluconato de calcio 10 %', cat: 'Especial', mode: 'cri',
+      conc: { v: 9.2, u: 'mg', label: '9.2 mg/mL — gluconato Ca 10 % (0.465 mEq/mL)' },
+      cri: { dog: [5, 15], cat: [5, 15], mass: 'mg', per: 'hr', unit: 'mg/kg/h' },
+      bolus: { dog: { min: 50, max: 150, u: 'mg', note: 'lento' }, cat: { min: 50, max: 150, u: 'mg', note: 'lento' } },
+      desc: 'Para pacientes con hipocalcemia.',
+      warn: [{ l: 'danger', t: 'Monitorizar ECG durante la CRI. Contraindicado en fibrilación ventricular o hipercalcemia; la administración rápida puede provocar hipotensión, arritmias y paro cardíaco.' }] },
+    { id: 'insulina', name: 'Insulina R (regular)', cat: 'Especial', mode: 'insulin',
+      desc: 'Insulina R en 100 mL de NaCl 0.9 % (bureta). Para cetoacidosis diabética, diabetes no controlada e hiperpotasemia. La velocidad del CRI y el glucosado se ajustan por glucemia.',
+      warn: [] },
+    { id: 'potasio', name: 'Potasio (KCl)', cat: 'Especial', mode: 'potassium',
+      desc: 'Reposición de potasio en hipopotasemia (pérdidas GI, enfermedad renal). La cantidad se define por el K⁺ sérico.',
+      warn: [] },
+  ];
+
+  // ---- build the grouped <select> ----
+  const sel = $('drugSelect');
+  const cats = [];
+  DRUGS.forEach(d => { if (!cats.includes(d.cat)) cats.push(d.cat); });
+  cats.forEach(c => {
+    const og = document.createElement('optgroup');
+    og.label = c;
+    DRUGS.filter(d => d.cat === c).forEach(d => {
+      const o = document.createElement('option');
+      o.value = d.id; o.textContent = d.name;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+
+  // ---- state ----
+  let drug = DRUGS[0];
+  let species = 'dog';
+  let concEdited = false, bolusEdited = false, bagEdited = false, criEdited = false;
+
+  function num(el) { const v = parseFloat(el.value); return isNaN(v) ? null : v; }
+  function fmt(n, dec) {
+    if (dec === undefined) dec = 2;
+    if (n === null || n === undefined || !isFinite(n)) return '—';
+    let s = Number(n).toFixed(dec);
+    // trim trailing zeros but keep at least 1 decimal for small numbers
+    if (s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+    return s;
+  }
+  function fmtSmart(n) {
+    if (n === null || !isFinite(n)) return '—';
+    const a = Math.abs(n);
+    if (a !== 0 && a < 0.1) return fmt(n, 3);
+    return fmt(n, 2);
+  }
+
+  const modeBlocks = { cri: $('mode-cri'), combo: $('mode-combo'), insulin: $('mode-insulin'), potassium: $('mode-potassium') };
+  function showMode(m) {
+    Object.keys(modeBlocks).forEach(k => modeBlocks[k].classList.toggle('hidden', k !== m));
+  }
+
+  function speciesSupported(d, sp) {
+    if (d.mode === 'combo') return sp === 'dog';
+    if (d.mode === 'insulin' || d.mode === 'potassium') return true;
+    return d.cri[sp] !== null && d.cri[sp] !== undefined;
+  }
+
+  function renderDrug() {
+    // species buttons availability
+    document.querySelectorAll('.species-btn').forEach(b => {
+      const sp = b.dataset.species;
+      const ok = speciesSupported(drug, sp);
+      b.disabled = !ok;
+      b.classList.toggle('active', sp === species && ok);
+    });
+
+    // description
+    const warnHtml = (drug.warn || []).map(w =>
+      `<p style="color:var(--${w.l === 'danger' ? 'danger' : w.l === 'warn' ? 'warning' : 'text-muted'})">${w.l === 'info' ? '' : '⚠ '}${w.t}</p>`).join('');
+    let concLine = '';
+    if (drug.conc) concLine = `<p class="conc">Concentración de referencia: ${drug.conc.label}</p>`;
+    $('drugDesc').innerHTML =
+      `<span class="cat-badge">${drug.cat}</span>` +
+      `<p>${drug.desc}</p>` + concLine + warnHtml;
+
+    showMode(drug.mode);
+
+    if (drug.mode === 'cri') setupCri();
+    calc();
+  }
+
+  function setupCri() {
+    const r = drug.cri[species];
+    // CRI dose
+    $('criDoseUnit').textContent = drug.cri.unit;
+    $('criDoseUnitLabel').textContent = r ? `(rango ${fmt(r[0])}–${fmt(r[1])} ${drug.cri.unit})` : '';
+    $('criDoseHint').textContent = r ? `Rango del manual: ${fmt(r[0])}–${fmt(r[1])} ${drug.cri.unit}` : '';
+    if (!criEdited && r) $('criDose').value = r[0];
+    // concentration
+    if (drug.standalone) {
+      $('conc').value = 1; $('conc').disabled = true; $('concUnit').textContent = 'mL/mL';
+      $('concHint').textContent = 'Coloide: se infunde sin diluir.';
+    } else {
+      $('conc').disabled = false;
+      $('concUnit').textContent = drug.conc.u + '/mL';
+      $('concHint').textContent = drug.conc.label;
+      if (!concEdited) $('conc').value = drug.conc.v;
+    }
+    // bolus
+    const b = drug.bolus[species];
+    if (b) {
+      $('bolusDoseUnit').textContent = b.u + '/kg';
+      $('bolusDoseHint').textContent = `Rango del manual: ${fmt(b.min)}–${fmt(b.max)} ${b.u}/kg` + (b.note ? ` (${b.note})` : '');
+      if (!bolusEdited) $('bolusDose').value = b.min;
+    } else {
+      $('bolusDoseUnit').textContent = '—';
+      $('bolusDoseHint').textContent = 'Este fármaco no lleva bolo de carga.';
+      if (!bolusEdited) $('bolusDose').value = '';
+    }
+  }
+
+  // generic CRI volume: returns {mlPerHr, totalMl}
+  function criVolume(concV, concU, dose, mass, per, weight, hours) {
+    const perHourMass = dose * weight * perFactor[per];         // in `mass` unit / hour
+    const perHourInConc = convert(perHourMass, mass, concU);    // in conc unit / hour
+    const mlPerHr = perHourInConc / concV;
+    return { mlPerHr: mlPerHr, totalMl: mlPerHr * hours };
+  }
+  function bolusVolume(concV, concU, dosePerKg, boUnit, weight) {
+    const totalInConc = convert(dosePerKg * weight, boUnit, concU);
+    return totalInConc / concV;
+  }
+
+  function alertBox(container, level, text) {
+    const div = document.createElement('div');
+    div.className = 'alert alert-' + (level === 'warn' ? 'warn' : level);
+    div.innerHTML = `<span class="icon">${level === 'info' ? 'i' : '!'}</span><div class="body">${text}</div>`;
+    container.appendChild(div);
+  }
+
+  function calc() {
+    if (drug.mode === 'cri') return calcCri();
+    if (drug.mode === 'combo') return calcCombo();
+    if (drug.mode === 'insulin') return calcInsulin();
+    if (drug.mode === 'potassium') return calcPotassium();
+  }
+
+  function calcCri() {
+    const box = $('criAlerts'); box.innerHTML = '';
+    const weight = num($('weight'));
+    const hours = num($('hours'));
+    const maint = num($('maint')) || 60;
+    const dose = num($('criDose'));
+    const concV = drug.standalone ? 1 : num($('conc'));
+
+    if (!weight || weight <= 0 || !hours || hours <= 0 || dose === null || dose < 0 || !concV || concV <= 0) {
+      $('criDrugMl').textContent = '—'; $('criSub').textContent = 'Completa peso, horas, dosis y concentración.';
+      $('criRate').textContent = '—'; $('criBolus').textContent = '—'; $('criBag').textContent = '—';
+      $('criMix').textContent = '—'; $('criFormula').innerHTML = ''; return;
+    }
+
+    // fluid therapy → maintenance rate
+    const fluidDay = weight * maint;
+    const rate = fluidDay / 24;
+
+    let drugRes, rateShown = rate, bagVol;
+    if (drug.standalone) {
+      // colloid: own infusion, no dilution
+      drugRes = criVolume(1, 'ml', dose, drug.cri.mass, drug.cri.per, weight, hours);
+      rateShown = drugRes.mlPerHr;              // infuse at its own rate
+      bagVol = drugRes.totalMl;
+      if (!bagEdited) $('bagVol').value = fmt(bagVol, 2);
+    } else {
+      drugRes = criVolume(concV, drug.conc.u, dose, drug.cri.mass, drug.cri.per, weight, hours);
+      bagVol = bagEdited ? num($('bagVol')) : rate * hours;
+      if (!bagEdited) $('bagVol').value = fmt(bagVol, 2);
+    }
+
+    // bolus
+    let bolusMl = null;
+    const b = drug.bolus[species];
+    const bDose = num($('bolusDose'));
+    if (b && bDose !== null && bDose > 0) bolusMl = bolusVolume(concV, drug.conc.u, bDose, b.u, weight);
+
+    const drugMl = drugRes.totalMl;
+    const baseVol = Math.max(0, bagVol - drugMl);
+
+    // --- render main ---
+    $('criDrugMl').textContent = fmtSmart(drugMl) + ' mL';
+    $('criDrugName').textContent = 'de ' + drug.name.toLowerCase().replace(/\s*\(.*\)/, '') + ' a agregar';
+    $('criRate').textContent = fmt(rateShown, 2);
+    $('criBolus').textContent = bolusMl === null ? '—' : fmtSmart(bolusMl);
+    $('criBag').textContent = fmt(bagVol, 1);
+    $('criSub').textContent = `Para un ${species === 'dog' ? 'perro' : 'gato'} de ${fmt(weight)} kg, infusión de ${fmt(hours)} h a ${fmt(dose)} ${drug.cri.unit}.`;
+
+    // --- mix statement ---
+    if (drug.standalone) {
+      $('criMix').innerHTML = `Colocar <strong>${fmtSmart(bagVol)} mL de ${drug.name}</strong> en una bureta e infundir a <strong>${fmt(rateShown, 2)} mL/h</strong> durante ${fmt(hours)} h (sin diluir).`;
+    } else {
+      $('criMix').innerHTML = `<strong>${fmt(baseVol, 2)} mL de sol. Hartman</strong> + <strong>${fmtSmart(drugMl)} mL de ${drug.name.replace(/\s*\(.*\)/, '')}</strong>` +
+        (bolusMl !== null ? ` (bolo de carga aparte: <strong>${fmtSmart(bolusMl)} mL</strong>)` : '') +
+        ` — para ${fmt(hours)} h de infusión a <strong>${fmt(rateShown, 2)} mL/h</strong>.`;
+    }
+
+    // --- formula breakdown ---
+    let f = '';
+    f += `<div class="label">1 · Terapia de líquidos (mantenimiento)</div>`;
+    f += `<div class="step">(${fmt(weight)} kg) × ${fmt(maint)} mL/kg/día = ${fmt(fluidDay, 1)} mL/24 h → <strong>${fmt(rate, 2)} mL/h</strong></div>`;
+    if (b && bolusMl !== null) {
+      f += `<div class="label">2 · Bolo de carga</div>`;
+      f += `<div class="step">(${fmt(weight)} kg) × ${fmt(bDose)} ${b.u}/kg = ${fmt(bDose * weight, 3)} ${b.u} ÷ ${fmt(concV)} ${drug.conc.u}/mL = <strong>${fmtSmart(bolusMl)} mL</strong></div>`;
+    }
+    f += `<div class="label">${b && bolusMl !== null ? '3' : '2'} · Volumen del CRI (${drug.cri.unit})</div>`;
+    if (drug.standalone) {
+      f += `<div class="step">(${fmt(weight)} kg) × ${fmt(dose)} ${drug.cri.unit} = ${fmt(drugRes.mlPerHr, 2)} mL/h × ${fmt(hours)} h = <strong>${fmtSmart(drugMl)} mL</strong></div>`;
+    } else {
+      const per = drug.cri.per;
+      const perHourMass = dose * weight * perFactor[per];
+      if (per === 'min') {
+        f += `<div class="step">(${fmt(weight)} kg) × ${fmt(dose)} = ${fmt(dose * weight, 3)} ${drug.cri.mass}/min × 60 × ${fmt(hours)} h = ${fmt(perHourMass * hours, 1)} ${drug.cri.mass}</div>`;
+      } else if (per === 'day') {
+        f += `<div class="step">(${fmt(weight)} kg) × ${fmt(dose)} = ${fmt(dose * weight, 3)} ${drug.cri.mass}/24 h ÷ 24 × ${fmt(hours)} h = ${fmt(perHourMass * hours, 3)} ${drug.cri.mass}</div>`;
+      } else {
+        f += `<div class="step">(${fmt(weight)} kg) × ${fmt(dose)} = ${fmt(perHourMass, 3)} ${drug.cri.mass}/h × ${fmt(hours)} h = ${fmt(perHourMass * hours, 3)} ${drug.cri.mass}</div>`;
+      }
+      f += `<div class="step">÷ ${fmt(concV)} ${drug.conc.u}/mL = <strong>${fmtSmart(drugMl)} mL</strong></div>`;
+      f += `<div class="label">${b && bolusMl !== null ? '4' : '3'} · Mezcla final</div>`;
+      f += `<div class="step final">${fmt(bagVol, 1)} mL bolsa − ${fmtSmart(drugMl)} mL fármaco = ${fmt(baseVol, 2)} mL Hartman + ${fmtSmart(drugMl)} mL ${drug.name.replace(/\s*\(.*\)/, '')}</div>`;
+    }
+    $('criFormula').innerHTML = f;
+
+    // --- alerts ---
+    const r = drug.cri[species];
+    if (r && (dose < r[0] || dose > r[1])) {
+      alertBox(box, 'warn', `<strong>Dosis fuera de rango.</strong> El manual indica ${fmt(r[0])}–${fmt(r[1])} ${drug.cri.unit} para ${species === 'dog' ? 'perro' : 'gato'}.`);
+    }
+    if (!drug.standalone && drugMl >= bagVol) {
+      alertBox(box, 'danger', `<strong>El volumen del fármaco (${fmtSmart(drugMl)} mL) alcanza o supera el de la bolsa (${fmt(bagVol, 1)} mL).</strong> Aumenta el volumen de bolsa/horas o revisa la dosis.`);
+    }
+    if (bolusMl !== null && bolusMl > 0 && bolusMl < 0.05) {
+      alertBox(box, 'info', `Bolo muy pequeño (${fmtSmart(bolusMl)} mL): considera diluir el fármaco para medirlo con exactitud.`);
+    }
+    (drug.warn || []).forEach(w => { if (w.l === 'danger') alertBox(box, 'danger', w.t); });
+  }
+
+  function calcCombo() {
+    const box = $('comboAlerts'); box.innerHTML = '';
+    const weight = num($('cbWeight')), hours = num($('cbHours'));
+    const lidoD = num($('cbLido')), ketD = num($('cbKet'));
+    if (!weight || weight <= 0 || !hours || hours <= 0 || lidoD === null || ketD === null) {
+      ['cbTotalMl', 'cbLidoMl', 'cbKetMl', 'cbRate'].forEach(i => $(i).textContent = '—');
+      $('cbMix').textContent = '—'; $('cbFormula').innerHTML = ''; return;
+    }
+    const rate = weight * 60 / 24;
+    const bag = rate * hours;
+    const lido = criVolume(20000, 'mcg', lidoD, 'mcg', 'min', weight, hours).totalMl;
+    const ket = criVolume(100000, 'mcg', ketD, 'mcg', 'min', weight, hours).totalMl;
+    const base = Math.max(0, bag - lido - ket);
+    $('cbTotalMl').textContent = fmtSmart(lido + ket) + ' mL';
+    $('cbLidoMl').textContent = fmtSmart(lido);
+    $('cbKetMl').textContent = fmtSmart(ket);
+    $('cbRate').textContent = fmt(rate, 2);
+    $('cbSub').textContent = `Perro de ${fmt(weight)} kg, infusión de ${fmt(hours)} h.`;
+    $('cbMix').innerHTML = `<strong>${fmt(base, 2)} mL de sol. Hartman</strong> + <strong>${fmtSmart(lido)} mL de lidocaína</strong> + <strong>${fmtSmart(ket)} mL de ketamina</strong> — para ${fmt(hours)} h a <strong>${fmt(rate, 2)} mL/h</strong>.`;
+    let f = `<div class="label">Terapia de líquidos</div><div class="step">(${fmt(weight)} kg) × 60 = ${fmt(weight * 60, 1)} mL/24 h → <strong>${fmt(rate, 2)} mL/h</strong> → bolsa ${fmt(bag, 1)} mL</div>`;
+    f += `<div class="label">Lidocaína (${fmt(lidoD)} mcg/kg/min · 20 mg/mL)</div><div class="step">${fmt(weight)}×${fmt(lidoD)}×60×${fmt(hours)} ÷ 20 000 = <strong>${fmtSmart(lido)} mL</strong></div>`;
+    f += `<div class="label">Ketamina (${fmt(ketD)} mcg/kg/min · 100 mg/mL)</div><div class="step">${fmt(weight)}×${fmt(ketD)}×60×${fmt(hours)} ÷ 100 000 = <strong>${fmtSmart(ket)} mL</strong></div>`;
+    f += `<div class="step final">${fmt(bag, 1)} − ${fmtSmart(lido)} − ${fmtSmart(ket)} = ${fmt(base, 2)} mL Hartman + fármacos</div>`;
+    $('cbFormula').innerHTML = f;
+    if (lidoD < 30 || lidoD > 50) alertBox(box, 'warn', `<strong>Lidocaína fuera de rango</strong> (30–50 mcg/kg/min).`);
+    if (ketD < 3 || ketD > 10) alertBox(box, 'warn', `<strong>Ketamina fuera de rango</strong> (3–10 mcg/kg/min).`);
+    if (lido + ket >= bag) alertBox(box, 'danger', `<strong>El volumen de fármacos supera la bolsa.</strong> Aumenta horas/volumen o revisa dosis.`);
+  }
+
+  function calcInsulin() {
+    const box = $('insAlerts'); box.innerHTML = '';
+    const weight = num($('insWeight')), glu = num($('insGlu'));
+    document.querySelectorAll('#insTable tr').forEach(tr => tr.classList.remove('hl'));
+    if (!weight || weight <= 0 || glu === null || glu < 0) {
+      ['insCriRate', 'insDoseU', 'insDoseMl', 'insGlucPct'].forEach(i => $(i).textContent = '—');
+      $('insMix').textContent = '—'; return;
+    }
+    // band
+    let band, criRate, glucPct;
+    if (glu > 250) { band = 'gt250'; criRate = 10; glucPct = 0; }
+    else if (glu >= 200) { band = '200'; criRate = 7; glucPct = 2.5; }
+    else if (glu >= 150) { band = '150'; criRate = 5; glucPct = 2.5; }
+    else if (glu >= 100) { band = '100'; criRate = 5; glucPct = 5; }
+    else { band = 'lt100'; criRate = 0; glucPct = 5; }
+    const tr = document.querySelector(`#insTable tr[data-band="${band}"]`); if (tr) tr.classList.add('hl');
+
+    const doseU = 0.88 * weight;
+    const insMl = doseU / 100;                 // 100 U/mL
+    const bag = 100;
+    const dextroseMl = bag * glucPct / 50;     // dextrosa 50 %
+    const naclMl = bag - insMl - dextroseMl;
+
+    $('insCriRate').textContent = fmt(criRate, 0);
+    $('insDoseU').textContent = fmt(doseU, 2);
+    $('insDoseMl').textContent = fmtSmart(insMl);
+    $('insGlucPct').textContent = glucPct === 0 ? 'NO' : fmt(glucPct) + ' %';
+    $('insMix').innerHTML = glucPct === 0
+      ? `<strong>${fmt(naclMl, 2)} mL de NaCl 0.9 %</strong> + <strong>${fmtSmart(insMl)} mL de insulina R</strong> (${fmt(doseU, 2)} U). Sin glucosar. CRI a <strong>${fmt(criRate, 0)} mL/h</strong>.`
+      : `<strong>${fmt(naclMl, 2)} mL de NaCl 0.9 %</strong> + <strong>${fmtSmart(insMl)} mL de insulina R</strong> (${fmt(doseU, 2)} U) + <strong>${fmt(dextroseMl, 2)} mL de dextrosa 50 %</strong> (glucosar al ${fmt(glucPct)} %). CRI a <strong>${fmt(criRate, 0)} mL/h</strong>.`;
+    if (criRate === 0) alertBox(box, 'warn', `<strong>Glucemia &lt; 100 mg/dL:</strong> no infundir insulina (CRI 0 mL/h). Corregir la hipoglucemia y reevaluar.`);
+    if (glu > 250) alertBox(box, 'info', `Glucemia &gt; 250 mg/dL: no se glucosa la solución. Reevaluar glucemia periódicamente.`);
+  }
+
+  const K_TABLE = [
+    { max: 2.0, per1L: 80, per250: 20, criMax: 6, band: 'lt2' },
+    { max: 2.5, per1L: 60, per250: 15, criMax: 8, band: '2.1' },
+    { max: 3.0, per1L: 40, per250: 10, criMax: 12, band: '2.6' },
+    { max: 3.5, per1L: 28, per250: 7, criMax: 18, band: '3.1' },
+    { max: 5.0, per1L: 20, per250: 5, criMax: 25, band: '3.6' },
+  ];
+  function calcPotassium() {
+    const box = $('kAlerts'); box.innerHTML = '';
+    const weight = num($('kWeight')), serum = num($('kSerum')), maint = num($('kMaint')) || 60;
+    document.querySelectorAll('#kTable tr').forEach(tr => tr.classList.remove('hl'));
+    // auto bag
+    if (!bagEdited) { const auto = weight ? weight * maint : 0; if (auto > 0) $('kBag').value = fmt(auto, 0); }
+    const bag = num($('kBag'));
+    if (!weight || weight <= 0 || serum === null || serum <= 0 || !bag || bag <= 0) {
+      ['kMl', 'kMeq', 'kRate', 'kRateMeq'].forEach(i => $(i).textContent = '—');
+      $('kMix').textContent = '—'; return;
+    }
+    const row = K_TABLE.find(r => serum <= r.max) || K_TABLE[K_TABLE.length - 1];
+    const tr = document.querySelector(`#kTable tr[data-band="${row.band}"]`); if (tr) tr.classList.add('hl');
+
+    const meq = bag / 1000 * row.per1L;      // rule of three from the 1 L column
+    const kcl = meq / 4;                      // 4 mEq/mL
+    const base = Math.max(0, bag - kcl);
+    const rate = weight * maint / 24;
+    const meqPerKgH = (meq / bag) * rate / weight;
+
+    $('kMl').textContent = fmtSmart(kcl) + ' mL';
+    $('kMeq').textContent = fmt(meq, 1);
+    $('kRate').textContent = fmt(rate, 2);
+    $('kRateMeq').textContent = fmt(meqPerKgH, 3);
+    $('kSub').textContent = `Perro/gato de ${fmt(weight)} kg, K⁺ ${fmt(serum)} mEq/L → ${row.per1L} mEq/L de KCl.`;
+    $('kMix').innerHTML = `<strong>${fmt(base, 1)} mL de sol. Hartman</strong> + <strong>${fmtSmart(kcl)} mL de KCl</strong> (${fmt(meq, 1)} mEq) en bureta — infusión a <strong>${fmt(rate, 2)} mL/h</strong>.`;
+
+    if (meqPerKgH > 0.5) alertBox(box, 'danger', `<strong>Aporte de K⁺ ${fmt(meqPerKgH, 3)} mEq/kg/h supera el máximo seguro (0.5).</strong> Baja la velocidad de infusión o diluye más el potasio.`);
+    if (rate / weight > row.criMax) alertBox(box, 'warn', `<strong>La velocidad (${fmt(rate / weight, 1)} mL/kg/h) supera el CRI máx de la tabla (${row.criMax} mL/kg/h)</strong> para este K⁺ sérico.`);
+  }
+
+  // ---- glucose helper ----
+  function calcGlucose() {
+    const ml = num($('gMl')), want = num($('gWant')), have = num($('gHave'));
+    if (!ml || !want || !have || have <= 0) { $('gOut').textContent = '—'; return; }
+    const add = ml * want / have;
+    const base = Math.max(0, ml - add);
+    $('gOut').innerHTML = `Agregar <strong>${fmt(add, 2)} mL de dextrosa al ${fmt(have)} %</strong> → mezcla: <strong>${fmt(base, 2)} mL de solución base + ${fmt(add, 2)} mL dextrosa ${fmt(have)} %</strong> (para glucosar al ${fmt(want)} %).`;
+  }
+
+  // ---- wiring ----
+  sel.addEventListener('change', () => {
+    drug = DRUGS.find(d => d.id === sel.value) || DRUGS[0];
+    concEdited = bolusEdited = bagEdited = criEdited = false;
+    if (!speciesSupported(drug, species)) species = drug.onlyCat ? 'cat' : 'dog';
+    renderDrug();
+  });
+  document.querySelectorAll('.species-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      species = btn.dataset.species;
+      criEdited = bolusEdited = false; // reset dose defaults to new species
+      renderDrug();
+    });
+  });
+  $('conc').addEventListener('input', () => { concEdited = true; calc(); });
+  $('bolusDose').addEventListener('input', () => { bolusEdited = true; calc(); });
+  $('bagVol').addEventListener('input', () => { bagEdited = true; calc(); });
+  $('criDose').addEventListener('input', () => { criEdited = true; calc(); });
+  ['weight', 'hours', 'maint'].forEach(id => $(id).addEventListener('input', calc));
+  ['cbWeight', 'cbHours', 'cbLido', 'cbKet'].forEach(id => $(id).addEventListener('input', calcCombo));
+  ['insWeight', 'insGlu'].forEach(id => $(id).addEventListener('input', calcInsulin));
+  ['kWeight', 'kSerum', 'kMaint'].forEach(id => $(id).addEventListener('input', calcPotassium));
+  $('kBag').addEventListener('input', () => { bagEdited = true; calcPotassium(); });
+  ['gMl', 'gWant', 'gHave'].forEach(id => $(id).addEventListener('input', calcGlucose));
+
+  // init
+  renderDrug();
+  calcGlucose();
+})();
+</script>
+
+</body>
+</html>
