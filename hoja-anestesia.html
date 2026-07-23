@@ -139,19 +139,13 @@
     .app { max-width: none; padding: 0; }
     .topnav, .print-btn { display: none; }
     .sheet { border: none; border-radius: 0; padding: 0; }
-    header h1 { font-size: 17px; margin: 0 0 1px; }
-    header p { margin: 0 0 8px; }
-    section { margin-bottom: 5px; }
-    h2 { margin: 0 0 3px; padding-bottom: 2px; }
-    table { font-size: 9px; line-height: 1.1; }
-    th { font-size: 8px; }
-    th, td { padding: 0.5px 4px; }
-    .fields { gap: 2px 14px; }
-    .asa { gap: 2px 10px; }
-    .asa .desc { font-size: 10px; }
-    .asa-e { margin-top: 5px; padding: 4px 8px; }
+    header h1 { font-size: 18px; }
+    section { margin-bottom: 12px; }
+    table { font-size: 11px; }
+    th { font-size: 9px; }
+    th, td { padding: 2px 6px; }
+    .asa .desc { font-size: 11px; }
     .hint { display: none; }
-    .page-2 { break-before: page; }
     tr { break-inside: avoid; }
     input { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
@@ -303,6 +297,16 @@
             <td class="write"><input></td><td class="write"><input></td><td class="write"><input></td><td class="write"><input></td>
           </tr>
 
+          <tr class="cat"><td colspan="7">Antibióticos</td></tr>
+          <tr>
+            <td class="write"><input placeholder="Antibiótico"></td><td class="write"><input placeholder="Presentación"></td><td class="write"><input placeholder="Dosis de referencia"></td>
+            <td class="write"><input></td><td class="write"><input></td><td class="write"><input></td><td class="write"><input></td>
+          </tr>
+          <tr>
+            <td class="write"><input placeholder="Antibiótico"></td><td class="write"><input placeholder="Presentación"></td><td class="write"><input placeholder="Dosis de referencia"></td>
+            <td class="write"><input></td><td class="write"><input></td><td class="write"><input></td><td class="write"><input></td>
+          </tr>
+
           <tr class="cat"><td colspan="7">Anticolinérgico · Emergencia · Adyuvantes · Analépticos</td></tr>
           <tr>
             <td class="drug">Atropina</td><td class="pres">0.5 mg/mL</td>
@@ -396,7 +400,7 @@
     <section>
       <h2>Observaciones</h2>
       <div class="lines">
-        <input><input><input><input><input><input>
+        <input><input>
       </div>
     </section>
 
