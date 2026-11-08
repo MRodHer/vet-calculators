@@ -28,6 +28,9 @@
   .mod-toggle input { width:auto; }
   .mod-toggle b { font-size:13px; color:var(--azul); }
   .mod-config { display:none; margin-top:10px; border-left:3px solid var(--azul2); padding:8px 0 4px 12px; }
+  .cfg-t { font-weight:700; color:var(--azul); font-size:12.5px; margin-bottom:6px; }
+  details#ajustes { margin-top:14px; border:1px dashed var(--linea); border-radius:8px; padding:8px 12px; }
+  @media (max-width:700px){ input,select,textarea { font-size:16px; } }
   .mod-config.show { display:block; }
   .btnbar { display:flex; gap:10px; flex-wrap:wrap; margin-top:4px; }
   button { background:var(--azul); color:#fff; border:0; border-radius:8px; padding:11px 20px; font-size:14px; font-weight:600; cursor:pointer; }
@@ -91,7 +94,8 @@
   <div class="panel">
     <h2>1 · Paciente</h2>
     <div class="grid">
-      <div><label>Nombre (opcional)</label><input id="nombre" placeholder="p. ej. Makalu"></div>
+      <div><label>Nombre del paciente (opcional)</label><input id="nombre" placeholder="p. ej. Makalu"></div>
+      <div><label>Tutor (opcional)</label><input id="tutor" placeholder="Nombre del tutor"></div>
       <div><label>Especie</label><select id="especie"><option value="perro">Perro</option><option value="gato">Gato</option></select></div>
       <div><label>Peso (kg)</label><input id="peso" type="number" min="0.5" step="0.5" placeholder="42"></div>
       <div><label>Edad (años)</label><input id="edad" type="number" min="0" step="0.5" placeholder="6"></div>
@@ -135,7 +139,7 @@
 
   <!-- TERAPIAS -->
   <div class="panel">
-    <h2>3 · Terapias disponibles para el curso <span class="muted">(activa las que Val pueda/quiera usar; el plan las reparte por fase)</span></h2>
+    <h2>3 · Terapias disponibles para el curso <span class="muted">(solo marca las que quieras usar; los parámetros se calculan solos)</span></h2>
     <div class="mods">
       <label class="mod-toggle" data-for="laser"><input type="checkbox" id="m_laser" checked><b>🔴 Láser</b></label>
       <label class="mod-toggle" data-for="us"><input type="checkbox" id="m_us" checked><b>🔊 Ultrasonido</b></label>
@@ -146,7 +150,10 @@
       <label class="mod-toggle" data-for="ejerc"><input type="checkbox" id="m_ejerc" checked><b>🦴 Ejercicio</b></label>
     </div>
 
+    <details id="ajustes">
+    <summary>⚙️ Ajustar parámetros (opcional — todo viene calculado en automático)</summary>
     <div class="mod-config" id="cfg_laser">
+      <div class="cfg-t">🔴 Láser</div>
       <div class="grid">
         <div><label>Modo</label><select id="l_modo"><option value="auto">Auto (PW, o CW si nervioso)</option><option value="PW">PW — pulsado 10 Hz</option><option value="CW">CW — continuo</option></select></div>
         <div><label>Potencia</label><select id="l_pot"><option>100</option><option>75</option><option>50</option><option>25</option></select></div>
@@ -154,27 +161,32 @@
       </div>
     </div>
     <div class="mod-config" id="cfg_us">
+      <div class="cfg-t">🔊 Ultrasonido</div>
       <div class="grid">
         <div><label>Profundidad</label><select id="u_depth"><option value="auto">Auto (según cada patología)</option><option value="superf">Superficial (3 MHz)</option><option value="profundo">Profundo (1 MHz)</option></select></div>
       </div>
     </div>
     <div class="mod-config" id="cfg_estim">
+      <div class="cfg-t">⚡ Electroterapia</div>
       <div class="muted">El objetivo (analgesia vs fortalecimiento) se ajusta solo según la fase de cada sesión.</div>
     </div>
     <div class="mod-config" id="cfg_eswt">
+      <div class="cfg-t">💥 Ondas de choque</div>
       <div class="grid">
-        <div><label>Severidad</label><select id="s_sev"><option value="leve">Leve / agudo</option><option value="mod" selected>Moderado crónico</option><option value="sev">Severo refractario</option></select></div>
-        <div><label>Nº de sitios</label><input id="s_sitios" type="number" min="1" value="1"></div>
+        <div><label>Severidad</label><select id="s_sev"><option value="auto" selected>Auto (según fase de las patologías)</option><option value="leve">Leve / agudo</option><option value="mod">Moderado crónico</option><option value="sev">Severo refractario</option></select></div>
+        <div><label>Nº de sitios (auto = nº de regiones)</label><input id="s_sitios" type="number" min="1" placeholder="auto"></div>
         <div><label>Nº de sesiones de choque</label><input id="s_num" type="number" min="1" max="6" value="3"></div>
       </div>
     </div>
     <div class="mod-config" id="cfg_regen">
+      <div class="cfg-t">🧬 PRP / Células madre</div>
       <div class="grid">
         <div><label>Producto</label><select id="r_prod"><option value="msc_prp">Células madre + PRP</option><option value="msc">Células madre (MSC)</option><option value="prp">PRP solo</option></select></div>
         <div><label>Articulación</label><input id="r_art" placeholder="rodilla"></div>
       </div>
     </div>
     <div class="mod-config" id="cfg_ha">
+      <div class="cfg-t">💉 Ácido hialurónico</div>
       <div class="grid">
         <div><label>Producto</label><select id="h_prod"></select></div>
         <div><label>Nº de infiltraciones (serie semanal)</label><input id="h_num" type="number" min="1" max="3" value="3"></div>
@@ -197,15 +209,19 @@
       </details>
     </div>
     <div class="mod-config" id="cfg_proc">
+      <div class="cfg-t">Infiltraciones</div>
       <div class="grid">
         <div><label>Sedación aceptada (infiltraciones)</label><select id="r_sed"><option value="ligera">Sedación ligera reversible (ideal)</option><option value="local">Solo anestesia local (rechazan sedación)</option></select></div>
       </div>
     </div>
+    </details>
 
     <div class="btnbar" style="margin-top:14px;">
       <button onclick="generar()">Generar protocolo completo</button>
       <button class="sec" onclick="imprimir()">Imprimir / Guardar PDF</button>
+      <button class="sec" onclick="nuevoPaciente()">🧹 Nuevo paciente</button>
     </div>
+    <div class="muted" style="margin-top:6px;">Lo que escribas se guarda solo en este navegador como borrador; si recargas, aquí sigue.</div>
   </div>
 
   <div id="out"></div>
@@ -251,20 +267,20 @@ document.querySelectorAll('.mod-toggle').forEach(t=>{
 });
 
 /* ===== patologías ===== */
-function addPato(){
+function addPato(x){
+  x=x||{};
   const d=document.createElement('div'); d.className='pato';
-  d.innerHTML='<div><label>Patología</label><select class="p_ind">'+opts(INDIC,'cruzado')+'</select></div>'+
+  d.innerHTML='<div><label>Patología</label><select class="p_ind">'+opts(INDIC,INDIC[x.ind]?x.ind:'cruzado')+'</select></div>'+
     '<div><label>Región / lado</label><input class="p_reg" placeholder="rodilla derecha"></div>'+
-    '<div><label>Fase / cronicidad</label><select class="p_fase">'+opts(FASES,'subaguda')+'</select></div>'+
+    '<div><label>Fase / cronicidad</label><select class="p_fase">'+opts(FASES,FASES[x.fase]?x.fase:'subaguda')+'</select></div>'+
     '<button type="button" class="sec sm" aria-label="Quitar patología">✕</button>';
-  d.querySelector('button').onclick=()=>{ if(document.querySelectorAll('.pato').length>1) d.remove(); };
+  d.querySelector('.p_reg').value=typeof x.region==='string'?x.region:'';
+  d.querySelector('button').onclick=()=>{ if(document.querySelectorAll('.pato').length>1){ d.remove(); guardarBorrador(); } };
   document.getElementById('patos').appendChild(d);
 }
-function getPatos(){
-  return [...document.querySelectorAll('.pato')].map(d=>({ ind:d.querySelector('.p_ind').value,
-    region:d.querySelector('.p_reg').value.trim()||'la zona', fase:d.querySelector('.p_fase').value }));
-}
-addPato();
+const patosCrudos=()=>[...document.querySelectorAll('.pato')].map(d=>({ ind:d.querySelector('.p_ind').value,
+    region:d.querySelector('.p_reg').value.trim(), fase:d.querySelector('.p_fase').value }));
+const getPatos=()=>patosCrudos().map(x=>({...x,region:x.region||'la zona'}));
 
 /* ===== ácido hialurónico: productos y dosis editables ===== */
 function loadProds(){
@@ -461,7 +477,7 @@ function sessionCard(i,ph,post,p,sch){
   const e=sch.energyOf[i];
   if(on('eswt') && e){
     const sed = (p.especie==='gato')?' · gato: requiere sedación/analgesia previa':(e>ESWT.sedUmbral?' · &gt;120 mJ: considerar ansiólisis/sedación':' · tolera sin sedar');
-    add('💥 Ondas de choque', e+' mJ · '+ESWT.freqHz+' · '+ESWT.pulsos(p.peso||35)+' pulsos · '+(val('s_sitios')||1)+' sitio(s)'+sed);
+    add('💥 Ondas de choque', e+' mJ · '+ESWT.freqHz+' · '+ESWT.pulsos(p.peso||35)+' pulsos · '+(parseInt(val('s_sitios'))||p.nRegiones)+' sitio(s)'+sed);
   } else if(on('eswt') && post){
     add('💥 Ondas de choque','— (en pausa por infiltración)');
   }
@@ -500,7 +516,9 @@ function buildSchedule(p){
     if(eswt.length===0 && !procOn) eswt.push(2);
   }
   // energías escaladas (si ya recibió choque, sin rampa inicial)
-  let base=ESWT.baseSev[val('s_sev')];
+  // severidad auto: todas agudas → leve; si no → moderado (severo refractario solo si Val lo elige)
+  const sev=val('s_sev')==='auto'?(p.patos.every(x=>x.fase==='aguda')?'leve':'mod'):val('s_sev');
+  let base=ESWT.baseSev[sev];
   if(p.peso && p.peso<15) base=Math.max(40,base-20);
   if(p.especie==='gato') base=Math.min(base,70);
   let seq=[base-25,base-10,base,base+10,base+15,base+20];
@@ -514,8 +532,9 @@ function buildSchedule(p){
 function generar(){
   CTX=iaConfirmado();
   const patos=getPatos();
-  const p={ nombre:val('nombre')||'Paciente', especie:val('especie'), peso:parseFloat(val('peso'))||0,
-    edad:val('edad'), apoyo:val('apoyo'), patos, regiones:[...new Set(patos.map(x=>x.region))].join(' + ') };
+  const regs=[...new Set(patos.map(x=>x.region))];
+  const p={ nombre:val('nombre')||'Paciente', tutor:val('tutor').trim(), especie:val('especie'), peso:parseFloat(val('peso'))||0,
+    edad:val('edad'), apoyo:val('apoyo'), patos, regiones:regs.join(' + '), nRegiones:regs.length };
   const out=document.getElementById('out');
   if(!Object.keys(TER).some(on)){
     out.innerHTML='<div class="doc"><div class="warn">Activa al menos una terapia que no esté contraindicada.</div></div>';
@@ -528,7 +547,7 @@ function generar(){
   for(let i=1;i<=sch.N;i++){ const f=faseDe(i,sch); if(f==='A')nA++; else if(f==='B')nB++; else if(f==='C')nC++; }
 
   let html='<div class="doc"><h2 class="title">Protocolo completo — '+esc(p.nombre)+'</h2>'+
-    '<div class="ptags">'+(p.especie==='gato'?'Gato':'Perro')+(p.peso?(' · '+p.peso+' kg'):'')+(p.edad?(' · '+esc(p.edad)+' años'):'')+
+    '<div class="ptags">'+(p.tutor?'Tutor: <b>'+esc(p.tutor)+'</b> · ':'')+(p.especie==='gato'?'Gato':'Perro')+(p.peso?(' · '+p.peso+' kg'):'')+(p.edad?(' · '+esc(p.edad)+' años'):'')+
     ' · Apoyo: '+APOYO[p.apoyo]+'<br>Patologías: '+patos.map(x=>'<b>'+INDIC[x.ind]+'</b> — '+esc(x.region)+' · '+FASES[x.fase]).join(' / ')+'</div>';
   if(val('historia').trim()) html+='<div class="hist"><b>Historia clínica:</b> '+esc(val('historia').trim())+'</div>';
   if(val('previos').trim()) html+='<div class="hist"><b>Tratamientos previos:</b> '+esc(val('previos').trim())+'</div>';
@@ -577,6 +596,29 @@ function imprimir(){
   if(document.getElementById('out').style.display!=='block') generar();
   setTimeout(()=>window.print(),200);
 }
+
+/* ===== borrador (solo en este navegador) ===== */
+const BORR='fisio-borrador', NO_BORR=new Set(['apikey','h_new_n','h_new_c','h_corte','h_mg1','h_mg2']);
+const camposBorr=()=>[...document.querySelectorAll('.panel input[id],.panel select[id],.panel textarea[id]')].filter(el=>!NO_BORR.has(el.id));
+function guardarBorrador(){
+  const f={}; camposBorr().forEach(el=>{ f[el.id]=el.type==='checkbox'?el.checked:el.value; });
+  store.set(BORR,JSON.stringify({f,patos:patosCrudos()}));
+}
+function nuevoPaciente(){
+  if(!confirm('¿Borrar los datos de este paciente para empezar uno nuevo? Si los necesitas, guarda antes el PDF.')) return;
+  store.del(BORR); location.reload();
+}
+(function(){
+  let b=null; try{ b=JSON.parse(store.get(BORR)); }catch(e){}
+  const patos=b&&Array.isArray(b.patos)&&b.patos.length?b.patos:[{}];
+  patos.forEach(addPato);
+  if(b&&b.f&&typeof b.f==='object') camposBorr().forEach(el=>{
+    if(!(el.id in b.f)) return;
+    if(el.type==='checkbox'){ el.checked=!!b.f[el.id]; el.dispatchEvent(new Event('change')); }
+    else el.value=String(b.f[el.id]);
+  });
+  const w=document.querySelector('.wrap'); w.addEventListener('input',guardarBorrador); w.addEventListener('change',guardarBorrador);
+})();
 </script>
 </body>
 </html>
