@@ -14,9 +14,13 @@
   .wrap { max-width:1080px; margin:0 auto; padding:18px; }
   .panel { background:#fff; border:1px solid var(--linea); border-radius:10px; padding:16px 18px; margin-bottom:16px; }
   .panel h2 { margin:0 0 12px; font-size:16px; color:var(--azul); border-bottom:2px solid #e0e7ef; padding-bottom:6px; }
+  .panel h3 { font-size:13.5px; color:var(--azul); margin:16px 0 8px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
   label { display:block; font-size:12px; font-weight:600; color:#52606d; margin-bottom:3px; }
-  input,select { width:100%; padding:7px 9px; border:1px solid var(--linea); border-radius:6px; font-size:13px; background:#fff; }
+  input,select,textarea { width:100%; padding:7px 9px; border:1px solid var(--linea); border-radius:6px; font-size:13px; background:#fff; font-family:inherit; }
+  textarea { min-height:90px; resize:vertical; }
+  .pato { display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; border:1px solid #e0e7ef; border-radius:8px; padding:10px; margin-bottom:8px; background:var(--suave); }
+  .pato > div { flex:1 1 170px; }
   .mods { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
   .mod-toggle { border:1px solid var(--linea); border-radius:8px; padding:10px 12px; cursor:pointer; user-select:none; display:flex; align-items:center; gap:9px; transition:.15s; background:#fff; }
   .mod-toggle:hover { border-color:var(--azul2); }
@@ -28,12 +32,19 @@
   .btnbar { display:flex; gap:10px; flex-wrap:wrap; margin-top:4px; }
   button { background:var(--azul); color:#fff; border:0; border-radius:8px; padding:11px 20px; font-size:14px; font-weight:600; cursor:pointer; }
   button.sec { background:#52606d; }
+  button.sm { padding:6px 12px; font-size:12px; }
   button:hover { filter:brightness(1.08); }
+  button:disabled { opacity:.6; cursor:wait; }
+  .ia-item { display:flex; gap:8px; align-items:flex-start; font-weight:400; font-size:12.5px; color:#1f2933; padding:5px 0; }
+  .ia-item input { width:auto; margin-top:3px; }
+  details { margin-top:10px; font-size:12.5px; }
+  summary { cursor:pointer; color:var(--azul2); font-weight:600; }
   /* OUTPUT */
   #out { display:none; }
   .doc { background:#fff; border:1px solid var(--linea); border-radius:10px; padding:22px 26px; }
   .doc h2.title { font-size:21px; color:var(--azul); border:0; margin:0 0 2px; }
   .doc .ptags { font-size:12.5px; color:#52606d; margin-bottom:10px; }
+  .hist { font-size:12px; white-space:pre-wrap; border:1px solid #e0e7ef; border-radius:6px; padding:7px 11px; margin:6px 0; }
   .legend { background:var(--suave); border-left:4px solid var(--azul2); padding:9px 13px; border-radius:4px; margin:10px 0 14px; font-size:12px; }
   .legend span { display:inline-block; font-size:11px; padding:2px 9px; border-radius:11px; margin:2px 6px 2px 0; }
   .phase-head { font-size:15px; color:var(--azul); margin:18px 0 4px; border-bottom:2px solid #e0e7ef; padding-bottom:4px; }
@@ -62,7 +73,7 @@
 <body>
 <header class="top">
   <h1>🐾 Creador de Protocolos de Fisioterapia</h1>
-  <p>Genera el <b>curso completo</b> de rehabilitación a partir del paciente, la indicación y las terapias disponibles · Láser Red/NIR · Chattanooga Intelect · Ondas de choque radial · Medicina regenerativa</p>
+  <p>Genera el <b>curso completo</b> de rehabilitación a partir del paciente, sus patologías, su historia clínica y las terapias disponibles · Láser Red/NIR · Chattanooga Intelect · Ondas de choque radial · Medicina regenerativa · Ácido hialurónico</p>
 </header>
 
 <div class="wrap">
@@ -78,34 +89,12 @@
 
   <!-- PACIENTE -->
   <div class="panel">
-    <h2>1 · Paciente e indicación</h2>
+    <h2>1 · Paciente</h2>
     <div class="grid">
       <div><label>Nombre (opcional)</label><input id="nombre" placeholder="p. ej. Makalu"></div>
       <div><label>Especie</label><select id="especie"><option value="perro">Perro</option><option value="gato">Gato</option></select></div>
       <div><label>Peso (kg)</label><input id="peso" type="number" min="0.5" step="0.5" placeholder="42"></div>
       <div><label>Edad (años)</label><input id="edad" type="number" min="0" step="0.5" placeholder="6"></div>
-      <div><label>Indicación / malestar</label>
-        <select id="indicacion">
-          <option value="cruzado">Ligamento cruzado (rodilla)</option>
-          <option value="artrosis">Osteoartrosis / enf. articular degenerativa</option>
-          <option value="cadera">Displasia de cadera</option>
-          <option value="tendon">Tendinopatía / lesión de tendón</option>
-          <option value="muscular">Lesión muscular / contractura</option>
-          <option value="postqx">Post-quirúrgico ortopédico</option>
-          <option value="discal">Enfermedad discal / dolor lumbar</option>
-          <option value="atrofia">Atrofia muscular / debilidad</option>
-          <option value="herida">Herida / lesión de tejido blando</option>
-          <option value="dolor">Dolor (analgesia general)</option>
-        </select>
-      </div>
-      <div><label>Fase / cronicidad inicial</label>
-        <select id="fase">
-          <option value="aguda">Aguda / inflamatoria (0–2 sem)</option>
-          <option value="subaguda" selected>Subaguda / proliferativa (2–8 sem)</option>
-          <option value="cronica">Crónica / remodelación (&gt;8 sem)</option>
-        </select>
-      </div>
-      <div><label>Región / lado</label><input id="region" placeholder="rodilla derecha"></div>
       <div><label>Apoyo de la extremidad</label>
         <select id="apoyo">
           <option value="completo">Completo (carga normal)</option>
@@ -116,17 +105,44 @@
       <div><label>Sesiones por semana</label><input id="freq" type="number" min="1" max="5" value="2"></div>
       <div><label>Nº total de sesiones (auto si vacío)</label><input id="total" type="number" min="2" max="30" placeholder="auto"></div>
     </div>
+
+    <h3>Patologías <span class="muted">(agrega todas las que tenga; cada una con su región y su fase)</span></h3>
+    <div id="patos"></div>
+    <button type="button" class="sec sm" onclick="addPato()">+ Agregar patología</button>
+  </div>
+
+  <!-- HISTORIA -->
+  <div class="panel">
+    <h2>2 · Historia clínica y tratamientos previos</h2>
+    <div class="grid">
+      <div><label>Historia clínica</label><textarea id="historia" placeholder="Comorbilidades, cirugías, hallazgos, estudios de imagen, evolución…"></textarea></div>
+      <div><label>Tratamientos previos</label><textarea id="previos" placeholder="Medicamentos (AINEs, corticoides…), terapias previas y cómo respondió, infiltraciones…"></textarea></div>
+    </div>
+    <div class="btnbar" style="margin-top:10px;">
+      <button type="button" class="sm" id="btnIA" onclick="analizarHistoria()">🤖 Analizar historia con IA</button>
+    </div>
+    <div id="ia_out" style="margin-top:8px;"></div>
+    <details>
+      <summary>🔑 Clave de OpenAI</summary>
+      <p class="muted">Se guarda solo en este navegador. Al analizar se envían a OpenAI la historia, los tratamientos, especie/peso/edad y las patologías (no el nombre del paciente). Revisa y confirma cada hallazgo antes de generar.</p>
+      <div class="grid" style="align-items:end;">
+        <div><label>API key (empieza con sk-)</label><input id="apikey" type="password" autocomplete="off"></div>
+        <div class="btnbar"><button type="button" class="sm" onclick="guardarKey()">Guardar</button><button type="button" class="sec sm" onclick="borrarKey()">Borrar</button></div>
+      </div>
+      <div id="key_msg" class="muted"></div>
+    </details>
   </div>
 
   <!-- TERAPIAS -->
   <div class="panel">
-    <h2>2 · Terapias disponibles para el curso <span class="muted">(activa las que Val pueda/quiera usar; el plan las reparte por fase)</span></h2>
+    <h2>3 · Terapias disponibles para el curso <span class="muted">(activa las que Val pueda/quiera usar; el plan las reparte por fase)</span></h2>
     <div class="mods">
       <label class="mod-toggle" data-for="laser"><input type="checkbox" id="m_laser" checked><b>🔴 Láser</b></label>
       <label class="mod-toggle" data-for="us"><input type="checkbox" id="m_us" checked><b>🔊 Ultrasonido</b></label>
       <label class="mod-toggle" data-for="estim"><input type="checkbox" id="m_estim" checked><b>⚡ Electroterapia</b></label>
       <label class="mod-toggle" data-for="eswt"><input type="checkbox" id="m_eswt" checked><b>💥 Ondas de choque</b></label>
       <label class="mod-toggle" data-for="regen"><input type="checkbox" id="m_regen"><b>🧬 PRP / Células madre</b></label>
+      <label class="mod-toggle" data-for="ha"><input type="checkbox" id="m_ha"><b>💉 Ácido hialurónico</b></label>
       <label class="mod-toggle" data-for="ejerc"><input type="checkbox" id="m_ejerc" checked><b>🦴 Ejercicio</b></label>
     </div>
 
@@ -139,7 +155,7 @@
     </div>
     <div class="mod-config" id="cfg_us">
       <div class="grid">
-        <div><label>Profundidad</label><select id="u_depth"><option value="auto">Auto (según indicación)</option><option value="superf">Superficial (3 MHz)</option><option value="profundo">Profundo (1 MHz)</option></select></div>
+        <div><label>Profundidad</label><select id="u_depth"><option value="auto">Auto (según cada patología)</option><option value="superf">Superficial (3 MHz)</option><option value="profundo">Profundo (1 MHz)</option></select></div>
       </div>
     </div>
     <div class="mod-config" id="cfg_estim">
@@ -156,7 +172,33 @@
       <div class="grid">
         <div><label>Producto</label><select id="r_prod"><option value="msc_prp">Células madre + PRP</option><option value="msc">Células madre (MSC)</option><option value="prp">PRP solo</option></select></div>
         <div><label>Articulación</label><input id="r_art" placeholder="rodilla"></div>
-        <div><label>Sedación aceptada</label><select id="r_sed"><option value="ligera">Sedación ligera reversible (ideal)</option><option value="local">Solo anestesia local (rechazan sedación)</option></select></div>
+      </div>
+    </div>
+    <div class="mod-config" id="cfg_ha">
+      <div class="grid">
+        <div><label>Producto</label><select id="h_prod"></select></div>
+        <div><label>Nº de infiltraciones (serie semanal)</label><input id="h_num" type="number" min="1" max="3" value="3"></div>
+        <div><label>Articulación(es)</label><input id="h_art" placeholder="rodilla"></div>
+      </div>
+      <div class="grid" style="margin-top:8px;">
+        <div><label>Corte de peso (kg)</label><input id="h_corte" type="number" min="1" step="0.5"></div>
+        <div><label>mg por articulación — menos del corte</label><input id="h_mg1" type="number" min="0" step="0.5"></div>
+        <div><label>mg por articulación — corte o más</label><input id="h_mg2" type="number" min="0" step="0.5"></div>
+      </div>
+      <p class="muted">Dosis propuesta de la literatura canina: ~10 mg/articulación &lt;10 kg y ~20 mg ≥10 kg, serie semanal ×3. El Hialudol 17 mg/mL está registrado para caballos (en perro es uso fuera de etiqueta). Confirma con criterio clínico; los cambios se guardan en este navegador.</p>
+      <details>
+        <summary>+ Agregar o quitar producto</summary>
+        <div class="grid" style="align-items:end;margin-top:6px;">
+          <div><label>Nombre</label><input id="h_new_n" placeholder="p. ej. Hyonate"></div>
+          <div><label>Concentración (mg/mL)</label><input id="h_new_c" type="number" min="0.1" step="0.1"></div>
+          <div class="btnbar"><button type="button" class="sm" onclick="addProd()">Agregar</button><button type="button" class="sec sm" onclick="delProd()">Quitar el seleccionado</button></div>
+        </div>
+        <div id="h_msg" class="muted"></div>
+      </details>
+    </div>
+    <div class="mod-config" id="cfg_proc">
+      <div class="grid">
+        <div><label>Sedación aceptada (infiltraciones)</label><select id="r_sed"><option value="ligera">Sedación ligera reversible (ideal)</option><option value="local">Solo anestesia local (rechazan sedación)</option></select></div>
       </div>
     </div>
 
@@ -184,94 +226,247 @@ const ESWT = { baseSev:{leve:70,mod:95,sev:120}, freqHz:'10–14 Hz', sedUmbral:
   pulsos:k=>k<10?'800–1200':(k<30?'1200–1800':'1800–2500'),
   contra:'Placas de crecimiento abiertas, sobre pulmón/corazón/tráquea/ojos/médula, tumor en el sitio, infección/herida activa, gestación, coagulopatías/anticoagulantes, marcapasos.' };
 const REGEN = { lbl:{msc_prp:'Células madre mesenquimales + PRP',msc:'Células madre mesenquimales (MSC)',prp:'PRP (plasma rico en plaquetas)'} };
+const HA = { defProds:[{n:'Hialudol',c:17}], defDosis:{corte:10,mg1:10,mg2:20},
+  contra:'Infección articular o cutánea en el sitio de punción, hipersensibilidad conocida al ácido hialurónico. Puede haber brote inflamatorio transitorio 24–48 h post-infiltración.' };
 const SESIONES_IND = { cruzado:12,artrosis:10,cadera:10,tendon:9,muscular:8,postqx:12,discal:10,atrofia:10,herida:8,dolor:6 };
-const FASES = { aguda:'Aguda / inflamatoria', subaguda:'Subaguda / proliferativa', cronica:'Crónica / remodelación' };
-const INDIC = { cruzado:'Ligamento cruzado (rodilla)',artrosis:'Osteoartrosis',cadera:'Displasia de cadera',tendon:'Tendinopatía',
-  muscular:'Lesión muscular',postqx:'Post-quirúrgico ortopédico',discal:'Enf. discal / dolor lumbar',atrofia:'Atrofia muscular',herida:'Tejido blando',dolor:'Dolor (analgesia)' };
+const FASES = { aguda:'Aguda / inflamatoria (0–2 sem)', subaguda:'Subaguda / proliferativa (2–8 sem)', cronica:'Crónica / remodelación (>8 sem)' };
+const INDIC = { cruzado:'Ligamento cruzado (rodilla)',artrosis:'Osteoartrosis / enf. articular degenerativa',cadera:'Displasia de cadera',tendon:'Tendinopatía / lesión de tendón',
+  muscular:'Lesión muscular / contractura',postqx:'Post-quirúrgico ortopédico',discal:'Enfermedad discal / dolor lumbar',atrofia:'Atrofia muscular / debilidad',herida:'Herida / lesión de tejido blando',dolor:'Dolor (analgesia general)' };
 const APOYO = { completo:'Completo', parcial:'Parcial (cojea)', minimo:'Mínimo (apenas toca)' };
+const TER = { laser:'🔴 Láser', us:'🔊 Ultrasonido', estim:'⚡ Electroterapia', eswt:'💥 Ondas de choque', regen:'🧬 PRP / Células madre', ha:'💉 Ácido hialurónico', ejerc:'🦴 Ejercicio' };
 
-/* ===== toggles ===== */
-document.querySelectorAll('.mod-toggle').forEach(t=>{
-  const cb=t.querySelector('input'),id=t.dataset.for,cfg=document.getElementById('cfg_'+id);
-  const s=()=>{t.classList.toggle('on',cb.checked); if(cfg)cfg.classList.toggle('show',cb.checked);};
-  cb.addEventListener('change',s); s();
-});
 const val=id=>document.getElementById(id).value;
 const chk=id=>document.getElementById(id).checked;
-const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const opts=(o,sel)=>Object.entries(o).map(([k,v])=>'<option value="'+k+'"'+(k===sel?' selected':'')+'>'+esc(v)+'</option>').join('');
+const store={ get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},
+  set:(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}}, del:k=>{try{localStorage.removeItem(k);}catch(e){}} };
+
+/* ===== toggles ===== */
+function syncProc(){ document.getElementById('cfg_proc').classList.toggle('show',chk('m_regen')||chk('m_ha')); }
+document.querySelectorAll('.mod-toggle').forEach(t=>{
+  const cb=t.querySelector('input'),id=t.dataset.for,cfg=document.getElementById('cfg_'+id);
+  const s=()=>{t.classList.toggle('on',cb.checked); if(cfg)cfg.classList.toggle('show',cb.checked); syncProc();};
+  cb.addEventListener('change',s); s();
+});
+
+/* ===== patologías ===== */
+function addPato(){
+  const d=document.createElement('div'); d.className='pato';
+  d.innerHTML='<div><label>Patología</label><select class="p_ind">'+opts(INDIC,'cruzado')+'</select></div>'+
+    '<div><label>Región / lado</label><input class="p_reg" placeholder="rodilla derecha"></div>'+
+    '<div><label>Fase / cronicidad</label><select class="p_fase">'+opts(FASES,'subaguda')+'</select></div>'+
+    '<button type="button" class="sec sm" aria-label="Quitar patología">✕</button>';
+  d.querySelector('button').onclick=()=>{ if(document.querySelectorAll('.pato').length>1) d.remove(); };
+  document.getElementById('patos').appendChild(d);
+}
+function getPatos(){
+  return [...document.querySelectorAll('.pato')].map(d=>({ ind:d.querySelector('.p_ind').value,
+    region:d.querySelector('.p_reg').value.trim()||'la zona', fase:d.querySelector('.p_fase').value }));
+}
+addPato();
+
+/* ===== ácido hialurónico: productos y dosis editables ===== */
+function loadProds(){
+  try{ const a=JSON.parse(store.get('fisio-ah-productos'));
+    if(Array.isArray(a)&&a.length&&a.every(x=>x&&typeof x.n==='string'&&x.n&&Number(x.c)>0)) return a; }catch(e){}
+  return HA.defProds.slice();
+}
+let PRODS=loadProds();
+function renderProds(sel){
+  document.getElementById('h_prod').innerHTML=PRODS.map((p,i)=>'<option value="'+i+'"'+(i===sel?' selected':'')+'>'+esc(p.n)+' ('+p.c+' mg/mL)</option>').join('');
+}
+function addProd(){
+  const n=val('h_new_n').trim().slice(0,60), c=parseFloat(val('h_new_c')), msg=document.getElementById('h_msg');
+  if(!n||!(c>0)){ msg.textContent='Escribe el nombre y una concentración mayor a 0.'; return; }
+  PRODS.push({n,c}); store.set('fisio-ah-productos',JSON.stringify(PRODS)); renderProds(PRODS.length-1);
+  document.getElementById('h_new_n').value=''; document.getElementById('h_new_c').value=''; msg.textContent='Agregado: '+n+'.';
+}
+function delProd(){
+  const msg=document.getElementById('h_msg');
+  if(PRODS.length<2){ msg.textContent='Debe quedar al menos un producto.'; return; }
+  const i=parseInt(val('h_prod')), n=PRODS[i].n; PRODS.splice(i,1);
+  store.set('fisio-ah-productos',JSON.stringify(PRODS)); renderProds(0); msg.textContent='Quitado: '+n+'.';
+}
+renderProds(0);
+(function(){
+  let d=HA.defDosis; try{ const x=JSON.parse(store.get('fisio-ah-dosis')); if(x&&x.corte>0&&x.mg1>=0&&x.mg2>=0) d=x; }catch(e){}
+  ['corte','mg1','mg2'].forEach(k=>{ const el=document.getElementById('h_'+k); el.value=d[k];
+    el.addEventListener('change',()=>store.set('fisio-ah-dosis',JSON.stringify({corte:parseFloat(val('h_corte'))||HA.defDosis.corte,
+      mg1:parseFloat(val('h_mg1'))||0, mg2:parseFloat(val('h_mg2'))||0}))); });
+})();
+function haDosis(peso){
+  const prod=PRODS[parseInt(val('h_prod'))]||PRODS[0], corte=parseFloat(val('h_corte'))||HA.defDosis.corte;
+  const t=mg=>mg+' mg = '+(mg/prod.c).toFixed(2)+' mL';
+  const mg1=parseFloat(val('h_mg1'))||0, mg2=parseFloat(val('h_mg2'))||0;
+  const dosis = peso ? t(peso<corte?mg1:mg2) : ('&lt;'+corte+' kg: '+t(mg1)+' · ≥'+corte+' kg: '+t(mg2)+' (captura el peso)');
+  return { prod, dosis };
+}
+
+/* ===== OpenAI: análisis de historia ===== */
+const KEY='openai-api-key';
+document.getElementById('apikey').value=store.get(KEY)||'';
+function guardarKey(){ const k=val('apikey').trim(); const m=document.getElementById('key_msg');
+  if(!/^sk-[A-Za-z0-9_\-]{20,}$/.test(k)){ m.textContent='La clave no parece válida (debe empezar con sk-).'; return; }
+  store.set(KEY,k); m.textContent='Guardada en este navegador.'; }
+function borrarKey(){ store.del(KEY); document.getElementById('apikey').value=''; document.getElementById('key_msg').textContent='Borrada.'; }
+
+const IA_SCHEMA = { type:'object', additionalProperties:false, required:['bloquear','precauciones','alertas','eswt_previo'],
+  properties:{
+    bloquear:{ type:'array', items:{ type:'object', additionalProperties:false, required:['terapia','motivo'],
+      properties:{ terapia:{type:'string',enum:Object.keys(TER)}, motivo:{type:'string'} } } },
+    precauciones:{ type:'array', items:{ type:'object', additionalProperties:false, required:['terapia','motivo'],
+      properties:{ terapia:{type:'string',enum:Object.keys(TER)}, motivo:{type:'string'} } } },
+    alertas:{ type:'array', items:{type:'string'} },
+    eswt_previo:{ type:'boolean' } } };
+const IA_SYS = 'Eres asistente de una médica veterinaria especialista en rehabilitación de perros y gatos. Lee la historia clínica y los tratamientos previos y devuelve SOLO lo que el texto sustenta; no supongas datos que no estén escritos. '+
+  'Terapias del curso: laser (fotobiomodulación Red/NIR), us (ultrasonido terapéutico), estim (TENS/NMES), eswt (ondas de choque radiales), regen (PRP/células madre intraarticular), ha (ácido hialurónico intraarticular), ejerc (ejercicio terapéutico). '+
+  '"bloquear": contraindicación clara de esa terapia según la historia (p. ej. marcapasos o epilepsia → estim; neoplasia en la zona → laser/us/eswt; coagulopatía o anticoagulantes → eswt; infección articular → regen/ha; hipersensibilidad al ácido hialurónico → ha; gestación). '+
+  '"precauciones": cautelas o ajustes sin contraindicar (p. ej. implante metálico en la zona → us; corticoide intraarticular reciente → regen/ha; paciente geriátrico o cardiópata → sedación). '+
+  '"alertas": datos de la historia relevantes para planear (cirugías, terapias previas y su respuesta, comorbilidades, medicación actual). '+
+  '"eswt_previo": true solo si el texto dice que ya recibió ondas de choque. Español, frases breves. Si no hay nada, listas vacías.';
+
+let IA=null; // {texto, items:[{tipo,terapia?,motivo}]}
+const histTexto=()=>(val('historia').trim()+'\n---\n'+val('previos').trim());
+['historia','previos'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{
+  const w=document.getElementById('ia_stale'); if(w) w.style.display=(IA&&IA.texto!==histTexto())?'block':'none'; }));
+
+async function analizarHistoria(){
+  const out=document.getElementById('ia_out'), btn=document.getElementById('btnIA');
+  const key=store.get(KEY)||val('apikey').trim();
+  if(!val('historia').trim()&&!val('previos').trim()){ out.innerHTML='<div class="warn">Escribe la historia clínica o los tratamientos previos.</div>'; return; }
+  if(!key){ out.innerHTML='<div class="warn">Falta la clave de OpenAI (abre «🔑 Clave de OpenAI» abajo).</div>'; return; }
+  const texto=histTexto();
+  const datos={ especie:val('especie'), peso_kg:parseFloat(val('peso'))||null, edad_anios:parseFloat(val('edad'))||null,
+    patologias:getPatos().map(p=>({patologia:INDIC[p.ind],region:p.region,fase:FASES[p.fase]})),
+    terapias_activas:Object.keys(TER).filter(t=>chk('m_'+t)), historia_clinica:val('historia').trim(), tratamientos_previos:val('previos').trim() };
+  btn.disabled=true; out.innerHTML='<div class="muted">Analizando…</div>';
+  try{
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{ method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({ model:'gpt-4o', temperature:0,
+        messages:[{role:'system',content:IA_SYS},{role:'user',content:JSON.stringify(datos)}],
+        response_format:{type:'json_schema',json_schema:{name:'analisis_historia',strict:true,schema:IA_SCHEMA}} }) });
+    const j=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error((j.error&&j.error.message)||('HTTP '+res.status));
+    const msg=j.choices&&j.choices[0]&&j.choices[0].message;
+    if(!msg||msg.refusal||!msg.content) throw new Error((msg&&msg.refusal)||'Respuesta vacía');
+    const r=JSON.parse(msg.content);
+    // validar respuesta (no confiar en el modelo)
+    const okT=x=>x&&Object.prototype.hasOwnProperty.call(TER,x.terapia)&&typeof x.motivo==='string';
+    const cut=s=>String(s).slice(0,400);
+    const items=[];
+    (Array.isArray(r.bloquear)?r.bloquear:[]).filter(okT).forEach(x=>items.push({tipo:'bloquear',terapia:x.terapia,motivo:cut(x.motivo)}));
+    (Array.isArray(r.precauciones)?r.precauciones:[]).filter(okT).forEach(x=>items.push({tipo:'precaucion',terapia:x.terapia,motivo:cut(x.motivo)}));
+    (Array.isArray(r.alertas)?r.alertas:[]).filter(x=>typeof x==='string').forEach(x=>items.push({tipo:'alerta',motivo:cut(x)}));
+    if(r.eswt_previo===true) items.push({tipo:'eswt_previo',motivo:'Ya recibió ondas de choque: iniciar el curso con energía de trabajo (sin las 2 sesiones de rampa).'});
+    IA={texto,items}; renderIA();
+  }catch(e){
+    out.innerHTML='<div class="danger">No se pudo analizar: '+esc(e.message)+'</div>';
+  }finally{ btn.disabled=false; }
+}
+function renderIA(){
+  const out=document.getElementById('ia_out');
+  if(!IA.items.length){ out.innerHTML='<div class="warn">La IA no encontró contraindicaciones ni datos que cambien el plan.</div>'; return; }
+  const ico={bloquear:'🚫 Contraindicado',precaucion:'⚠️ Precaución',alerta:'📝 Dato',eswt_previo:'💥 Ondas de choque previas'};
+  out.innerHTML='<div class="muted" style="margin-bottom:4px;">Confirma lo que aplica (desmarca lo que no). Solo lo marcado cambia el protocolo:</div>'+
+    IA.items.map((x,i)=>'<label class="ia-item"><input type="checkbox" checked data-ia="'+i+'"><span><b>'+ico[x.tipo]+(x.terapia?' · '+TER[x.terapia]:'')+':</b> '+esc(x.motivo)+'</span></label>').join('')+
+    '<div id="ia_stale" class="warn" style="display:none;">La historia cambió después del análisis: vuelve a analizar.</div>';
+}
+function iaConfirmado(){
+  const c={blocked:new Set(),prec:[],alertas:[],eswtPrevio:false};
+  if(!IA) return c;
+  document.querySelectorAll('[data-ia]').forEach(cb=>{ if(!cb.checked) return; const x=IA.items[+cb.dataset.ia];
+    if(x.tipo==='bloquear') c.blocked.add(x.terapia); else if(x.tipo==='precaucion') c.prec.push(x);
+    else if(x.tipo==='alerta') c.alertas.push(x.motivo); else c.eswtPrevio=true; });
+  return c;
+}
+
+/* terapia activa = encendida por Val y no contraindicada por la historia confirmada */
+let CTX={blocked:new Set()};
+const on=t=>chk('m_'+t)&&!CTX.blocked.has(t);
 
 /* ===== fase por sesión ===== */
 function faseDe(i,sch){
-  if(sch.infiltr && i===sch.infiltr) return 'proc';
+  if(sch.procs.includes(i)) return 'proc';
   if(i<=sch.aEnd) return 'A';
   if(i<=sch.bEnd) return 'B';
   return 'C';
 }
 
 /* ===== builders de cada modalidad ===== */
-function laserLine(ph,post,p){
-  const base=LASER.porIndicacion[p.ind]||{min:12,modo:'PW'};
+const pref=(p,pt)=>p.patos.length>1?'<i>'+esc(pt.region)+'</i> ('+INDIC[pt.ind].split(' (')[0]+'): ':'';
+function laserLine(ph,post,pt){
+  const base=LASER.porIndicacion[pt.ind]||{min:12,modo:'PW'};
   let modo = val('l_modo')==='auto'?base.modo:val('l_modo');
   const pot=val('l_pot'); const min=parseInt(val('l_time'))||base.min;
   const dosis=(LASER.doseRate[modo]*LASER.potFactor[pot]*min).toFixed(1);
-  let zona = post?'<b>solo musculatura</b> (evitar punto de punción)':(ph==='A'?p.region+' (analgésico/antiinflamatorio)':p.region+' + musculatura periarticular');
+  let zona = post?'<b>solo musculatura</b> (evitar punto de punción)':(ph==='A'?esc(pt.region)+' (analgésico/antiinflamatorio)':esc(pt.region)+' + musculatura periarticular');
   return `${modo} · ${pot}% · ${min} min · ${zona} · ≈${dosis} J/cm²`;
 }
-function usLine(ph,post,p){
-  if(post) return 'Evitar sobre la articulación; opcional 1 MHz pulsado en músculo';
-  let depth = val('u_depth')==='auto'?(US.depth[p.ind]||'superf'):val('u_depth');
-  const term = (ph!=='A' && p.fase!=='aguda');
+function usLine(ph,post,pt){
+  if(post) return 'Evitar sobre la articulación infiltrada; opcional 1 MHz pulsado en músculo';
+  let depth = val('u_depth')==='auto'?(US.depth[pt.ind]||'superf'):val('u_depth');
+  const term = (ph!=='A' && pt.fase!=='aguda');
   const modoU = term?'continuo / 50% (térmico, pre-estiramiento)':'pulsado 20% (no térmico, antiinflamatorio)';
   const inten = term?(depth==='profundo'?'1.0–1.5 W/cm²':'0.8–1.0 W/cm²'):'0.5–0.8 W/cm²';
   return `${US.freq[depth]} · ${modoU} · ${inten} · 5–8 min`;
 }
 function estimLine(ph,post,p){
-  if(ph==='proc'||post) return 'NMES suave 35 Hz · 10 min cuádriceps + TENS si dolor';
+  const m='musculatura de '+esc(p.regiones);
+  if(ph==='proc'||post) return 'NMES suave 35 Hz · 10 min '+m+' + TENS si dolor';
   if(ph==='A'){
     let s='TENS 80–120 Hz · 12–15 min (analgesia)';
-    if(p.apoyo!=='completo'||p.ind==='atrofia') s+=' + NMES 35 Hz · 10 min cuádriceps (anti-atrofia)';
+    if(p.apoyo!=='completo'||p.patos.some(x=>x.ind==='atrofia')) s+=' + NMES 35 Hz · 10 min '+m+' (anti-atrofia)';
     return s;
   }
-  if(ph==='B') return 'NMES / VMS / Russian · 50 Hz · on 10 s/off 20 s · 15 min cuádriceps';
-  return 'NMES · 50 Hz · 15 min cuádriceps (mantenimiento)';
+  if(ph==='B') return 'NMES / VMS / Russian · 50 Hz · on 10 s/off 20 s · 15 min '+m;
+  return 'NMES · 50 Hz · 15 min '+m+' (mantenimiento)';
 }
 function ejercLine(ph,p){
   if(ph==='proc') return 'Día del procedimiento: reposo. Post 48–72 h estricto.';
   if(ph==='A'||ph==='postA') {
-    let s='PROM rodilla 10 rep · cambios de peso · bipedestación 5–10 s · caminata 5 min';
+    let s='PROM de '+esc(p.regiones)+' 10 rep · cambios de peso · bipedestación 5–10 s · caminata 5 min';
     if(p.apoyo==='minimo') s+=' (estimular que cargue la pata; propiocepción prioritaria)';
     return s;
   }
   if(ph==='B') return 'Sit-to-stand 5→10 rep · cavaletti bajo · superficies inestables · caminata 10–15 min';
   return 'Sit-to-stand 10–15 rep · cuesta · cavaletti · caminata 15–20 min (resistencia)';
 }
-function sessionCard(i,ph,post,p,isEswt,eEnergy){
-  const titF={A:'Fase A · dolor/activación',B:'Fase B · fortalecimiento',C:'Fase C · función/resistencia',proc:'PROCEDIMIENTO'};
-  const cls={A:'pa',B:'pb',C:'pc',proc:'pp'}[ph];
+function procCard(i,p,sch){
+  const n=sch.procs.indexOf(i)+1;
+  let rows=''; const add=(l,v)=>{rows+='<b>'+l+'</b><span>'+v+'</span>';};
+  if(sch.haOn){
+    const h=haDosis(p.peso);
+    add('💉 Ácido hialurónico','Infiltración '+n+'/'+sch.procs.length+' · '+esc(h.prod.n)+' ('+h.prod.c+' mg/mL) · '+h.dosis+' por articulación en '+esc(val('h_art')||p.regiones)+' · intraarticular · asepsia');
+  }
+  if(sch.regenOn && n===1)
+    add('🧬 Regenerativa','Depósito intraarticular de '+REGEN.lbl[val('r_prod')]+' en '+esc(val('r_art')||p.regiones)+' · guía ecográfica · asepsia'+(sch.haOn?' · mismo día que la 1ª de ácido hialurónico (una sola sedación)':''));
+  add('Sedación',val('r_sed')==='ligera'?'Sedación ligera reversible (butorfanol ± dexmedetomidina) — NO es anestesia general.':'Anestesia local intraarticular + contención experta (rechazan sedación; mayor riesgo de movimiento).');
+  add('Otras terapias','NO ondas de choque · NO láser de alta dosis sobre la punción · resto en pausa');
+  add('Post','Reposo estricto 48–72 h · correa · vigilar inflamación/dolor');
+  const tit=sch.haOn?'infiltración '+n+'/'+sch.procs.length:'infiltración';
+  return '<div class="session pp"><h3>Sesión '+i+' — PROCEDIMIENTO: '+tit+'</h3><div class="kv">'+rows+'</div>'+
+    (n===1?'<div class="danger"><b>Coordinación de tiempos:</b> última onda de choque ≥1 semana ANTES de la 1ª infiltración · sin choque sobre la articulación durante la serie ni 1 semana DESPUÉS de la última · sin láser directo sobre la punción 2–3 días. NMES y ejercicio suave continúan.</div>':'')+'</div>';
+}
+function sessionCard(i,ph,post,p,sch){
+  if(ph==='proc') return procCard(i,p,sch);
+  const titF={A:'Fase A · dolor/activación',B:'Fase B · fortalecimiento',C:'Fase C · función/resistencia'};
+  const cls={A:'pa',B:'pb',C:'pc'}[ph];
   let rows='';
   const add=(l,v)=>{rows+='<b>'+l+'</b><span>'+v+'</span>';};
-  if(ph==='proc'){
-    const prod=REGEN.lbl[val('r_prod')], art=val('r_art')||p.region;
-    const sed=val('r_sed')==='ligera'?'Sedación ligera reversible (butorfanol ± dexmedetomidina) — NO es anestesia general.':'Anestesia local intraarticular + contención experta (rechazan sedación; mayor riesgo de movimiento).';
-    add('🧬 Infiltración','Depósito intraarticular de '+prod+' en '+art+' · guía ecográfica · asepsia');
-    add('Sedación',sed);
-    add('Otras terapias','NO ondas de choque · NO láser de alta dosis sobre la punción · resto en pausa');
-    add('Post','Reposo estricto 48–72 h · correa · vigilar inflamación/dolor');
-    let body='<div class="session '+cls+'"><h3>Sesión '+i+' — '+titF.proc+': infiltración</h3><div class="kv">'+rows+'</div>'+
-      '<div class="danger"><b>Coordinación de tiempos:</b> última onda de choque ≥1 semana ANTES · sin choque sobre la articulación 1 semana DESPUÉS · sin láser directo sobre la punción 2–3 días. NMES y ejercicio suave continúan.</div></div>';
-    return body;
-  }
-  if(chk('m_laser')) add('🔴 Láser',laserLine(ph,post,p));
-  if(chk('m_us'))    add('🔊 Ultrasonido',usLine(ph,post,p));
-  if(chk('m_estim')) add('⚡ Electroterapia',estimLine(ph,post,p));
-  if(chk('m_eswt') && isEswt){
-    const sed = (p.especie==='gato')?' · gato: requiere sedación/analgesia previa':(eEnergy>ESWT.sedUmbral?' · &gt;120 mJ: considerar ansiólisis/sedación':' · tolera sin sedar');
-    add('💥 Ondas de choque', eEnergy+' mJ · '+ESWT.freqHz+' · '+ESWT.pulsos(p.peso||35)+' pulsos · '+(val('s_sitios')||1)+' sitio(s)'+sed);
-  } else if(chk('m_eswt') && post){
+  if(on('laser')) add('🔴 Láser',p.patos.map(pt=>pref(p,pt)+laserLine(ph,post,pt)).join('<br>'));
+  if(on('us'))    add('🔊 Ultrasonido',p.patos.map(pt=>pref(p,pt)+usLine(ph,post,pt)).join('<br>'));
+  if(on('estim')) add('⚡ Electroterapia',estimLine(ph,post,p));
+  const e=sch.energyOf[i];
+  if(on('eswt') && e){
+    const sed = (p.especie==='gato')?' · gato: requiere sedación/analgesia previa':(e>ESWT.sedUmbral?' · &gt;120 mJ: considerar ansiólisis/sedación':' · tolera sin sedar');
+    add('💥 Ondas de choque', e+' mJ · '+ESWT.freqHz+' · '+ESWT.pulsos(p.peso||35)+' pulsos · '+(val('s_sitios')||1)+' sitio(s)'+sed);
+  } else if(on('eswt') && post){
     add('💥 Ondas de choque','— (en pausa por infiltración)');
   }
-  if(chk('m_ejerc')) add('🦴 Ejercicio',ejercLine(post?'postA':ph,p));
-  let goal = post?'Reinicio suave post-infiltración: proteger el injerto, reactivar sin agredir la articulación.':
+  if(on('ejerc')) add('🦴 Ejercicio',ejercLine(post?'postA':ph,p));
+  let goal = post?'Reinicio suave post-infiltración: proteger la articulación infiltrada, reactivar sin agredirla.':
     (ph==='A'?'Controlar dolor/inflamación y arrancar la reactivación muscular.':
      ph==='B'?'Maximizar fuerza y propiocepción.':'Retorno funcional y resistencia.');
   return '<div class="session '+cls+'"><h3>Sesión '+i+' — '+titF[ph]+(post?' (post-infiltración)':'')+'</h3>'+
@@ -281,81 +476,100 @@ function sessionCard(i,ph,post,p,isEswt,eEnergy){
 /* ===== schedule ===== */
 function buildSchedule(p){
   const F=Math.max(1,parseInt(val('freq'))||2);
-  let N=parseInt(val('total'))|| SESIONES_IND[p.ind] || 10;
+  let N=parseInt(val('total'))|| Math.max(...p.patos.map(x=>SESIONES_IND[x.ind]||10));
   N=Math.max(3,Math.min(30,N));
   const aEnd=Math.max(2,Math.round(N*0.34));
-  const regenOn=chk('m_regen');
-  let infiltr=null;
-  if(regenOn){ infiltr=Math.min(N-2,Math.max(aEnd+2,Math.round(N*0.66))); }
-  const bEnd=regenOn?infiltr-1:Math.round(N*0.67);
+  const haOn=on('ha'), regenOn=on('regen'), procOn=haOn||regenOn;
+  // infiltraciones: la 1ª a ~2/3 del curso; la serie de AH es semanal (cada F sesiones)
+  let procs=[];
+  if(procOn){
+    const k=haOn?Math.max(1,Math.min(3,parseInt(val('h_num'))||3)):1;
+    const first=Math.min(N-2,Math.max(aEnd+2,Math.round(N*0.66)));
+    for(let j=0;j<k;j++) procs.push(first+j*F);
+    N=Math.max(N,procs[procs.length-1]+1); // al menos una sesión post tras la última
+  }
+  const bEnd=procOn?procs[0]-1:Math.round(N*0.67);
   // sesiones de choque: ~semanal (cada F), desde la 2, terminando ≥1 sem antes de infiltrar
   let eswt=[];
-  if(chk('m_eswt')){
+  if(on('eswt')){
     const maxNum=Math.max(1,parseInt(val('s_num'))||3);
     for(let s=2;s<=bEnd && eswt.length<maxNum; s+=F){
-      if(regenOn && s>infiltr-F) break;
+      if(procOn && s>procs[0]-F) break;
       eswt.push(s);
     }
-    if(eswt.length===0) eswt.push(2);
+    if(eswt.length===0 && !procOn) eswt.push(2);
   }
-  // energías escaladas
+  // energías escaladas (si ya recibió choque, sin rampa inicial)
   let base=ESWT.baseSev[val('s_sev')];
   if(p.peso && p.peso<15) base=Math.max(40,base-20);
   if(p.especie==='gato') base=Math.min(base,70);
-  const seq=[base-25,base-10,base,base+10,base+15,base+20].map(v=>Math.max(40,Math.min(p.especie==='gato'?70:130,v)));
+  let seq=[base-25,base-10,base,base+10,base+15,base+20];
+  if(CTX.eswtPrevio) seq=seq.slice(2);
+  seq=seq.map(v=>Math.max(40,Math.min(p.especie==='gato'?70:130,v)));
   const energyOf={}; eswt.forEach((s,k)=>energyOf[s]=seq[Math.min(k,seq.length-1)]);
-  return {N,F,aEnd,bEnd,infiltr,eswt,energyOf,regenOn};
+  return {N,F,aEnd,bEnd,procs,eswt,energyOf,haOn,regenOn};
 }
 
 /* ===== generar ===== */
 function generar(){
+  CTX=iaConfirmado();
+  const patos=getPatos();
   const p={ nombre:val('nombre')||'Paciente', especie:val('especie'), peso:parseFloat(val('peso'))||0,
-    edad:val('edad'), ind:val('indicacion'), fase:val('fase'), region:val('region')||'la zona',
-    apoyo:val('apoyo') };
-  if(!chk('m_laser')&&!chk('m_us')&&!chk('m_estim')&&!chk('m_eswt')&&!chk('m_regen')&&!chk('m_ejerc')){
-    document.getElementById('out').innerHTML='<div class="doc"><div class="warn">Activa al menos una terapia.</div></div>';
-    document.getElementById('out').style.display='block'; return;
+    edad:val('edad'), apoyo:val('apoyo'), patos, regiones:[...new Set(patos.map(x=>x.region))].join(' + ') };
+  const out=document.getElementById('out');
+  if(!Object.keys(TER).some(on)){
+    out.innerHTML='<div class="doc"><div class="warn">Activa al menos una terapia que no esté contraindicada.</div></div>';
+    out.style.display='block'; return;
   }
   const sch=buildSchedule(p);
 
   // contar fases
   let nA=0,nB=0,nC=0;
-  for(let i=1;i<=sch.N;i++){ if(sch.infiltr&&i===sch.infiltr)continue; const f=faseDe(i,sch); if(f==='A')nA++; else if(f==='B')nB++; else nC++; }
+  for(let i=1;i<=sch.N;i++){ const f=faseDe(i,sch); if(f==='A')nA++; else if(f==='B')nB++; else if(f==='C')nC++; }
 
   let html='<div class="doc"><h2 class="title">Protocolo completo — '+esc(p.nombre)+'</h2>'+
-    '<div class="ptags">'+(p.especie==='gato'?'Gato':'Perro')+(p.peso?(' · '+p.peso+' kg'):'')+(p.edad?(' · '+p.edad+' años'):'')+
-    ' · Indicación: <b>'+INDIC[p.ind]+'</b> · Estado inicial: '+FASES[p.fase]+' · Región: '+esc(p.region)+' · Apoyo: '+APOYO[p.apoyo]+'</div>'+
-    '<div class="legend"><b>'+sch.N+' sesiones · '+sch.F+'/semana ('+Math.ceil(sch.N/sch.F)+' semanas aprox.)</b><br>'+
+    '<div class="ptags">'+(p.especie==='gato'?'Gato':'Perro')+(p.peso?(' · '+p.peso+' kg'):'')+(p.edad?(' · '+esc(p.edad)+' años'):'')+
+    ' · Apoyo: '+APOYO[p.apoyo]+'<br>Patologías: '+patos.map(x=>'<b>'+INDIC[x.ind]+'</b> — '+esc(x.region)+' · '+FASES[x.fase]).join(' / ')+'</div>';
+  if(val('historia').trim()) html+='<div class="hist"><b>Historia clínica:</b> '+esc(val('historia').trim())+'</div>';
+  if(val('previos').trim()) html+='<div class="hist"><b>Tratamientos previos:</b> '+esc(val('previos').trim())+'</div>';
+  if((val('historia').trim()||val('previos').trim()) && (!IA||IA.texto!==histTexto()))
+    html+='<div class="warn">La historia clínica no se ha analizado'+(IA?' desde su último cambio':'')+': el plan no considera su contenido.</div>';
+  const offByHist=[...CTX.blocked].filter(t=>chk('m_'+t));
+  if(offByHist.length) html+='<div class="danger"><b>Excluido por la historia clínica:</b> '+offByHist.map(t=>TER[t]).join(', ')+'.</div>';
+  if(CTX.prec.length) html+='<div class="warn"><b>Precauciones:</b><br>'+CTX.prec.map(x=>TER[x.terapia]+': '+esc(x.motivo)).join('<br>')+'</div>';
+  if(CTX.alertas.length) html+='<div class="warn"><b>Datos de la historia a considerar:</b><br>'+CTX.alertas.map(esc).join('<br>')+'</div>';
+  if(CTX.eswtPrevio && on('eswt')) html+='<div class="warn">Ondas de choque previas: el curso inicia con energía de trabajo.</div>';
+
+  html+='<div class="legend"><b>'+sch.N+' sesiones · '+sch.F+'/semana ('+Math.ceil(sch.N/sch.F)+' semanas aprox.)</b><br>'+
       '<span style="background:#d6efef;">■ Fase A · dolor/activación ('+nA+')</span>'+
       '<span style="background:#f4e3b8;">■ Fase B · fortalecimiento ('+nB+')</span>'+
-      (sch.regenOn?'<span style="background:#c0392b;color:#fff;">■ Infiltración (S'+sch.infiltr+')</span>':'')+
+      (sch.procs.length?'<span style="background:#c0392b;color:#fff;">■ Infiltración (S'+sch.procs.join(', S')+')</span>':'')+
       '<span style="background:#e4daf0;">■ Fase C · función/resistencia ('+nC+')</span>'+
       (sch.eswt.length?'<br><span class="muted">Ondas de choque en sesiones: '+sch.eswt.join(', ')+'</span>':'')+'</div>';
 
   let lastPhaseHead='';
   for(let i=1;i<=sch.N;i++){
     const ph=faseDe(i,sch);
-    const post = sch.infiltr && i===sch.infiltr+1;
-    const headName = ph==='proc'?'Procedimiento':(ph==='A'?'FASE A — control de dolor, inflamación y reactivación':ph==='B'?'FASE B — fortalecimiento':'FASE C — función, retorno controlado y resistencia');
-    if(headName!==lastPhaseHead && ph!=='proc'){ html+='<div class="phase-head">'+headName+'</div>'; lastPhaseHead=headName; }
-    const isEswt = sch.eswt.includes(i);
-    html+=sessionCard(i,ph,post,p,isEswt,sch.energyOf[i]);
+    const post = ph!=='proc' && sch.procs.includes(i-1);
+    const headName = ph==='A'?'FASE A — control de dolor, inflamación y reactivación':ph==='B'?'FASE B — fortalecimiento':'FASE C — función, retorno controlado y resistencia';
+    if(ph!=='proc' && headName!==lastPhaseHead){ html+='<div class="phase-head">'+headName+'</div>'; lastPhaseHead=headName; }
+    html+=sessionCard(i,ph,post,p,sch);
   }
 
   // programa en casa
   html+='<div class="phase-head">Programa domiciliario (diario, base — ajustar a tolerancia)</div>'+
     '<table class="home"><tr><th>Bloque</th><th>Ejercicio</th><th>Dosis</th></tr>'+
-    '<tr><td>Movilidad / ROM</td><td>PROM de '+esc(p.region)+' + cookie stretches</td><td>10 rep · 3×/día</td></tr>'+
+    '<tr><td>Movilidad / ROM</td><td>PROM de '+esc(p.regiones)+' + cookie stretches</td><td>10 rep · 3×/día</td></tr>'+
     '<tr><td>Estabilidad</td><td>Equilibrio en cojín → superficies inestables</td><td>5 min · 2×/día</td></tr>'+
     '<tr><td>Fuerza</td><td>Sit-to-stand (sentadilla canina)</td><td>5→15 rep · 2×/día</td></tr>'+
     '<tr><td>Resistencia</td><td>Caminata con correa, progresiva</td><td>5 min → +2–3 min/semana</td></tr>'+
     '<tr><td>Regla de oro</td><td colspan="2"><b>Sin saltos, carreras ni juego brusco durante toda la rehabilitación.</b> Control de peso estricto.</td></tr></table>';
 
-  if(chk('m_eswt')) html+='<div class="danger"><b>Contraindicaciones ESWT:</b> '+ESWT.contra+' · Técnica: rasurar + gel abundante (sin gel se pierde ~70% y quema piel); cabezal en movimiento; escalar energía por tolerancia.</div>';
+  if(on('eswt')) html+='<div class="danger"><b>Contraindicaciones ESWT:</b> '+ESWT.contra+' · Técnica: rasurar + gel abundante (sin gel se pierde ~70% y quema piel); cabezal en movimiento; escalar energía por tolerancia.</div>';
+  if(sch.haOn) html+='<div class="danger"><b>Ácido hialurónico:</b> '+HA.contra+' Dosis por articulación según tabla editable; confirmar con criterio clínico.</div>';
 
-  html+='<div class="src">Parámetros: manual del láser Red/NIR · especificaciones Chattanooga Intelect · calculadora ESWT radial (vet-calculators) · Millis &amp; Levine, <i>Canine Rehabilitation and Physical Therapy</i>; Zink &amp; Van Dyke, <i>Canine Sports Medicine</i>; Riegel &amp; Godbold, <i>Laser Therapy in Vet Medicine</i>; Plumb\'s. Curso orientativo — criterio clínico final del operador.</div></div>';
+  html+='<div class="src">Parámetros: manual del láser Red/NIR · especificaciones Chattanooga Intelect · calculadora ESWT radial (vet-calculators) · Millis &amp; Levine, <i>Canine Rehabilitation and Physical Therapy</i>; Zink &amp; Van Dyke, <i>Canine Sports Medicine</i>; Riegel &amp; Godbold, <i>Laser Therapy in Vet Medicine</i>; Plumb\'s'+(sch.haOn?' · AH intraarticular en perro: Acta Sci Vet 2023 (1 vs 3 inyecciones semanales); Front Vet Sci 2020 (20 mg/cadera)':'')+'. Curso orientativo — criterio clínico final del operador.</div></div>';
 
-  const out=document.getElementById('out');
   out.innerHTML=html; out.style.display='block'; out.scrollIntoView({behavior:'smooth'});
 }
 
