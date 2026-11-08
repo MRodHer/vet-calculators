@@ -60,9 +60,6 @@
   .kv b { color:var(--azul); }
   .warn { background:#fff8e6; border:1px solid #f5d97a; border-radius:6px; padding:7px 11px; font-size:11.5px; margin:7px 0; }
   .danger { background:#fdecea; border:1px solid #e6a79c; border-radius:6px; padding:7px 11px; font-size:11.5px; margin:7px 0; }
-  table.home { border-collapse:collapse; width:100%; margin:6px 0; font-size:11.5px; }
-  table.home th,table.home td { border:1px solid #cdd5df; padding:4px 7px; text-align:left; }
-  table.home th { background:var(--azul); color:#fff; }
   .muted { color:#7b8794; font-size:11px; }
   .src { font-size:10.5px; color:#7b8794; border-top:1px solid #e0e7ef; padding-top:8px; margin-top:14px; }
   @media print {
@@ -152,6 +149,13 @@
 
     <details id="ajustes">
     <summary>⚙️ Ajustar parámetros (opcional — todo viene calculado en automático)</summary>
+    <div class="mod-config show">
+      <div class="cfg-t">🕐 Sesión</div>
+      <div class="grid">
+        <div><label>Duración máxima de la sesión (min)</label><input id="ses_min" type="number" min="20" max="120" value="60"></div>
+        <div><label>Máx. aparatos por sesión (además del ejercicio)</label><input id="max_ap" type="number" min="1" max="4" value="2"></div>
+      </div>
+    </div>
     <div class="mod-config" id="cfg_laser">
       <div class="cfg-t">🔴 Láser</div>
       <div class="grid">
@@ -412,42 +416,75 @@ function faseDe(i,sch){
 
 /* ===== builders de cada modalidad ===== */
 const pref=(p,pt)=>p.patos.length>1?'<i>'+esc(pt.region)+'</i> ('+INDIC[pt.ind].split(' (')[0]+'): ':'';
-function laserLine(ph,post,pt){
+function laserLine(ph,post,pt,min){
   const base=LASER.porIndicacion[pt.ind]||{min:12,modo:'PW'};
   let modo = val('l_modo')==='auto'?base.modo:val('l_modo');
-  const pot=val('l_pot'); const min=parseInt(val('l_time'))||base.min;
+  const pot=val('l_pot');
   const dosis=(LASER.doseRate[modo]*LASER.potFactor[pot]*min).toFixed(1);
   let zona = post?'<b>solo musculatura</b> (evitar punto de punción)':(ph==='A'?esc(pt.region)+' (analgésico/antiinflamatorio)':esc(pt.region)+' + musculatura periarticular');
   return `${modo} · ${pot}% · ${min} min · ${zona} · ≈${dosis} J/cm²`;
 }
-function usLine(ph,post,pt){
-  if(post) return 'Evitar sobre la articulación infiltrada; opcional 1 MHz pulsado en músculo';
+function usLine(ph,post,pt,min){
+  if(post) return '1 MHz pulsado 20% · 0.5–0.8 W/cm² · '+min+' min solo en músculo (evitar la articulación infiltrada)';
   let depth = val('u_depth')==='auto'?(US.depth[pt.ind]||'superf'):val('u_depth');
   const term = (ph!=='A' && pt.fase!=='aguda');
   const modoU = term?'continuo / 50% (térmico, pre-estiramiento)':'pulsado 20% (no térmico, antiinflamatorio)';
   const inten = term?(depth==='profundo'?'1.0–1.5 W/cm²':'0.8–1.0 W/cm²'):'0.5–0.8 W/cm²';
-  return `${US.freq[depth]} · ${modoU} · ${inten} · 5–8 min`;
+  return `${US.freq[depth]} · ${modoU} · ${inten} · ${min} min`;
 }
-function estimLine(ph,post,p){
+function estimLine(ph,post,p,min){
   const m='musculatura de '+esc(p.regiones);
-  if(ph==='proc'||post) return 'NMES suave 35 Hz · 10 min '+m+' + TENS si dolor';
+  if(post) return 'NMES suave 35 Hz · '+min+' min '+m+' + TENS si dolor';
   if(ph==='A'){
-    let s='TENS 80–120 Hz · 12–15 min (analgesia)';
-    if(p.apoyo!=='completo'||p.patos.some(x=>x.ind==='atrofia')) s+=' + NMES 35 Hz · 10 min '+m+' (anti-atrofia)';
-    return s;
+    if(p.apoyo!=='completo'||p.patos.some(x=>x.ind==='atrofia'))
+      return 'TENS 80–120 Hz · '+Math.max(5,min-5)+' min (analgesia) → NMES 35 Hz · 5 min '+m+' (anti-atrofia)';
+    return 'TENS 80–120 Hz · '+min+' min (analgesia)';
   }
-  if(ph==='B') return 'NMES / VMS / Russian · 50 Hz · on 10 s/off 20 s · 15 min '+m;
-  return 'NMES · 50 Hz · 15 min '+m+' (mantenimiento)';
+  if(ph==='B') return 'NMES / VMS / Russian · 50 Hz · on 10 s/off 20 s · '+min+' min '+m;
+  return 'NMES · 50 Hz · '+min+' min '+m+' (mantenimiento)';
 }
-function ejercLine(ph,p){
-  if(ph==='proc') return 'Día del procedimiento: reposo. Post 48–72 h estricto.';
-  if(ph==='A'||ph==='postA') {
-    let s='PROM de '+esc(p.regiones)+' 10 rep · cambios de peso · bipedestación 5–10 s · caminata 5 min';
-    if(p.apoyo==='minimo') s+=' (estimular que cargue la pata; propiocepción prioritaria)';
-    return s;
-  }
-  if(ph==='B') return 'Sit-to-stand 5→10 rep · cavaletti bajo · superficies inestables · caminata 10–15 min';
-  return 'Sit-to-stand 10–15 rep · cuesta · cavaletti · caminata 15–20 min (resistencia)';
+
+/* ===== ejercicio en consulta + tarea semanal para casa ===== */
+const EJ_MIN={A:20,post:15,B:25,C:25};
+const EJ={
+  A:['PROM (flexo-extensión) de {R} · 10–15 rep','Masaje / descarga muscular de {R} · 3–5 min','Cambios de peso de pie (empujes suaves) · 3×30 s','Bipedestación cuadrupedal asistida · 3×10 s','Caminata lenta con correa · 5 min'],
+  post:['PROM suave de {R} · 10 rep (sin forzar la articulación infiltrada)','Cambios de peso de pie · 3×20 s','Caminata lenta con correa · 5 min'],
+  B:['Sit-to-stand (sentadilla) · 3×5–10','Cavaletti bajo · 4–6 pasadas','Superficie inestable (cojín/colchoneta) · 3×1 min','Ochos alrededor de conos · 5 vueltas por lado','Tres patas (levantar una extremidad sana) · 3×10 s','Caminata hacia atrás · 3×5 m'],
+  C:['Sit-to-stand · 3×10–15','Cavaletti alto / obstáculos · 6–8 pasadas','Cuesta o escaleras · 5 subidas lentas','Balón/peanut o disco de equilibrio · 3×1 min','Tres patas · 3×15 s','Trote controlado con correa · 3–5 min']
+};
+const TAREA={
+  A:['PROM de {R} · 10 rep · 2–3×/día','Cambios de peso de pie · 3×30 s · 2×/día'],
+  B:['Sit-to-stand · 3×5–10 · 1×/día','Caminata con correa · 10–15 min · 2×/día'],
+  C:['Sit-to-stand · 3×10–15 · 1×/día','Caminata con cuestas suaves · 15–20 min · 2×/día']
+};
+const lista=(arr,p)=>arr.map(s=>'• '+s.replace('{R}',esc(p.regiones))).join('<br>');
+function ejercicios(ph,p){
+  let l=EJ[ph].slice();
+  if(ph!=='post' && p.patos.some(x=>x.ind==='discal')) l.push('Cookie stretches (flexión lateral siguiendo un premio) · 3×5 por lado');
+  let s=lista(l,p);
+  if(ph==='A' && p.apoyo==='minimo') s+='<br><i>Prioridad: estimular que cargue la pata (propiocepción).</i>';
+  return s;
+}
+
+/* ===== aparatos por sesión: máx. N y tiempo total limitado ===== */
+const PRIO={A:['laser','estim','us'],B:['us','estim','laser'],C:['estim','laser','us'],post:['estim','laser','us']};
+const MIN_AP={laser:5,us:4,estim:8};
+function planAparatos(ph,post,p,isEswt){
+  const maxAp=Math.max(1,parseInt(val('max_ap'))||2);
+  let list=PRIO[post?'post':ph].filter(on);
+  if(isEswt) list=['eswt',...list];
+  list=list.slice(0,maxAp);
+  const ejMin=on('ejerc')?EJ_MIN[post?'post':ph]:0;
+  const budget=(parseInt(val('ses_min'))||60)-ejMin-5; // 5 min de manejo/preparación
+  const t={};
+  if(list.includes('laser')) t.laser=p.patos.map(pt=>parseInt(val('l_time'))||(LASER.porIndicacion[pt.ind]||{min:12}).min);
+  if(list.includes('us')) t.us=post?[5]:p.patos.map(()=>6);
+  if(list.includes('estim')) t.estim=[post?10:15];
+  const fixed=list.includes('eswt')?5*(parseInt(val('s_sitios'))||p.nRegiones):0;
+  const suma=o=>Object.values(o).flat().reduce((a,b)=>a+b,0);
+  const s=suma(t), f=s>0?Math.min(1,Math.max(0,budget-fixed)/s):1;
+  Object.keys(t).forEach(k=>{ t[k]=t[k].map(m=>Math.max(MIN_AP[k],Math.round(m*f))); });
+  return {list,t,ejMin,total:fixed+suma(t)+ejMin+5};
 }
 function procCard(i,p,sch){
   const n=sch.procs.indexOf(i)+1;
@@ -471,22 +508,28 @@ function sessionCard(i,ph,post,p,sch){
   const cls={A:'pa',B:'pb',C:'pc'}[ph];
   let rows='';
   const add=(l,v)=>{rows+='<b>'+l+'</b><span>'+v+'</span>';};
-  if(on('laser')) add('🔴 Láser',p.patos.map(pt=>pref(p,pt)+laserLine(ph,post,pt)).join('<br>'));
-  if(on('us'))    add('🔊 Ultrasonido',p.patos.map(pt=>pref(p,pt)+usLine(ph,post,pt)).join('<br>'));
-  if(on('estim')) add('⚡ Electroterapia',estimLine(ph,post,p));
   const e=sch.energyOf[i];
-  if(on('eswt') && e){
-    const sed = (p.especie==='gato')?' · gato: requiere sedación/analgesia previa':(e>ESWT.sedUmbral?' · &gt;120 mJ: considerar ansiólisis/sedación':' · tolera sin sedar');
-    add('💥 Ondas de choque', e+' mJ · '+ESWT.freqHz+' · '+ESWT.pulsos(p.peso||35)+' pulsos · '+(parseInt(val('s_sitios'))||p.nRegiones)+' sitio(s)'+sed);
-  } else if(on('eswt') && post){
-    add('💥 Ondas de choque','— (en pausa por infiltración)');
+  const plan=planAparatos(ph,post,p,on('eswt')&&!!e);
+  plan.list.forEach(ap=>{
+    if(ap==='eswt'){
+      const sed = (p.especie==='gato')?' · gato: requiere sedación/analgesia previa':(e>ESWT.sedUmbral?' · &gt;120 mJ: considerar ansiólisis/sedación':' · tolera sin sedar');
+      add('💥 Ondas de choque', e+' mJ · '+ESWT.freqHz+' · '+ESWT.pulsos(p.peso||35)+' pulsos · '+(parseInt(val('s_sitios'))||p.nRegiones)+' sitio(s)'+sed);
+    }
+    if(ap==='laser') add('🔴 Láser',p.patos.map((pt,k)=>pref(p,pt)+laserLine(ph,post,pt,plan.t.laser[k])).join('<br>'));
+    if(ap==='us') add('🔊 Ultrasonido',post?usLine(ph,post,null,plan.t.us[0]):p.patos.map((pt,k)=>pref(p,pt)+usLine(ph,post,pt,plan.t.us[k])).join('<br>'));
+    if(ap==='estim') add('⚡ Electroterapia',estimLine(ph,post,p,plan.t.estim[0]));
+  });
+  if(on('ejerc')){
+    add('🦴 Ejercicio<br><span class="muted">~'+plan.ejMin+' min</span>',ejercicios(post?'post':ph,p));
+    if((i-1)%sch.F===0) add('🏠 Tarea de la semana',lista(TAREA[post?'A':ph],p));
   }
-  if(on('ejerc')) add('🦴 Ejercicio',ejercLine(post?'postA':ph,p));
+  const lim=parseInt(val('ses_min'))||60;
   let goal = post?'Reinicio suave post-infiltración: proteger la articulación infiltrada, reactivar sin agredirla.':
     (ph==='A'?'Controlar dolor/inflamación y arrancar la reactivación muscular.':
      ph==='B'?'Maximizar fuerza y propiocepción.':'Retorno funcional y resistencia.');
-  return '<div class="session '+cls+'"><h3>Sesión '+i+' — '+titF[ph]+(post?' (post-infiltración)':'')+'</h3>'+
-    '<div class="goal">'+goal+'</div><div class="kv">'+rows+'</div></div>';
+  return '<div class="session '+cls+'"><h3>Sesión '+i+' — '+titF[ph]+(post?' (post-infiltración)':'')+' · ⏱ ~'+plan.total+' min</h3>'+
+    '<div class="goal">'+goal+'</div><div class="kv">'+rows+'</div>'+
+    (plan.total>lim?'<div class="warn">Esta sesión rebasa los '+lim+' min aun con tiempos mínimos: considera menos zonas o menos aparatos.</div>':'')+'</div>';
 }
 
 /* ===== schedule ===== */
@@ -575,14 +618,7 @@ function generar(){
     html+=sessionCard(i,ph,post,p,sch);
   }
 
-  // programa en casa
-  html+='<div class="phase-head">Programa domiciliario (diario, base — ajustar a tolerancia)</div>'+
-    '<table class="home"><tr><th>Bloque</th><th>Ejercicio</th><th>Dosis</th></tr>'+
-    '<tr><td>Movilidad / ROM</td><td>PROM de '+esc(p.regiones)+' + cookie stretches</td><td>10 rep · 3×/día</td></tr>'+
-    '<tr><td>Estabilidad</td><td>Equilibrio en cojín → superficies inestables</td><td>5 min · 2×/día</td></tr>'+
-    '<tr><td>Fuerza</td><td>Sit-to-stand (sentadilla canina)</td><td>5→15 rep · 2×/día</td></tr>'+
-    '<tr><td>Resistencia</td><td>Caminata con correa, progresiva</td><td>5 min → +2–3 min/semana</td></tr>'+
-    '<tr><td>Regla de oro</td><td colspan="2"><b>Sin saltos, carreras ni juego brusco durante toda la rehabilitación.</b> Control de peso estricto.</td></tr></table>';
+  html+='<div class="warn"><b>Regla de oro en casa:</b> sin saltos, carreras ni juego brusco durante toda la rehabilitación. Control de peso estricto. La tarea de cada semana va en la primera sesión de esa semana.</div>';
 
   if(on('eswt')) html+='<div class="danger"><b>Contraindicaciones ESWT:</b> '+ESWT.contra+' · Técnica: rasurar + gel abundante (sin gel se pierde ~70% y quema piel); cabezal en movimiento; escalar energía por tolerancia.</div>';
   if(sch.haOn) html+='<div class="danger"><b>Ácido hialurónico:</b> '+HA.contra+' Dosis por articulación según tabla editable; confirmar con criterio clínico.</div>';
